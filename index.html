@@ -203,6 +203,9 @@
 </head>
 <body>
 
+    <!-- แท็กเล่นเพลงแบบซ่อนตัวเล่น (จะเริ่มเล่นเมื่อกดปุ่ม) -->
+    <audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
+
     <!-- พื้นหลังฝนดิจิทัล Matrix -->
     <canvas id="matrixCanvas"></canvas>
 
@@ -309,6 +312,12 @@
             const logsDiv = document.getElementById('terminalLogs');
             
             if(!name) return;
+
+            // สั่งเล่นเพลง mp3 คลอทันทีที่คุณแฟนกดปุ่มส่งชื่อ
+            const music = document.getElementById('bgMusic');
+            if (music) {
+                music.play().catch(err => console.log("Audio playback error:", err));
+            }
 
             playBeep(880, 0.1);
             document.getElementById('authForm').style.display = 'none';
