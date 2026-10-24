@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECURE_SYSTEM_v4.0 // AUTH REQUIRED</title>
+    <!-- ฟอนต์แนวคอมพิวเตอร์ Terminal -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #0b0f19;
+            color: #00ff66;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .terminal-box {
+            background: rgba(13, 17, 23, 0.95);
+            border: 2px solid #30363d;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 255, 102, 0.1);
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: #161b22;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .dot {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .terminal-title {
+            color: #8b949e;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+
+        .terminal-body {
+            padding: 25px;
+        }
+
+        .system-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #c9d1d9;
+            margin-bottom: 20px;
+        }
+
+        .warning {
+            color: #ff7b72;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .prompt-line {
+            display: flex;
+            align-items: center;
+            background: #010409;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 10px 14px;
+        }
+
+        .prompt-symbol {
+            color: #27c93f;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #00ff66;
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            width: 100%;
+        }
+
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-family: 'Fira Code', monospace;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            box-shadow: 0 0 10px rgba(35, 134, 54, 0.4);
+        }
+
+        button:hover {
+            background: #2ea043;
+        }
+
+        /* หน้าต่างรัน Terminal Logs */
+        #terminalLogs {
+            display: none;
+            font-size: 13px;
+            color: #8b949e;
+            line-height: 1.8;
+            margin-top: 15px;
+        }
+
+        .log-success { color: #00ff66; }
+        .log-highlight { color: #ff7b72; font-weight: bold; }
+
+        /* หน้าจอผลลัพธ์สุดท้าย */
+        #accessGranted {
+            display: none;
+            margin-top: 20px;
+            border-top: 1px dashed #30363d;
+            padding-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .success-box {
+            background: rgba(0, 255, 102, 0.05);
+            border: 1px solid #00ff66;
+            border-radius: 8px;
+            padding: 20px;
+            color: #c9d1d9;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-box">
+        <div class="terminal-header">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+            <span class="terminal-title">root@btt-server:~ (bash)</span>
+        </div>
+        
+        <div class="terminal-body">
+            <div class="system-text">
+                <span class="warning">[CRITICAL ALERT]</span> Unauthorized connection detected.<br>
+                Please enter operator identity to bypass firewall authorization.
+            </div>
+
+            <!-- Netlify Form -->
+            <form name="hacker-auth" method="POST" data-netlify="true" id="authForm" onsubmit="runHackerScript(event)">
+                <input type="hidden" name="form-name" value="hacker-auth" />
+                
+                <div class="input-group">
+                    <div class="prompt-line">
+                        <span class="prompt-symbol">#</span>
+                        <input type="text" id="nameInput" name="operator_name" placeholder="ENTER_OPERATOR_NAME..." required autocomplete="off">
+                    </div>
+                </div>
+                
+                <button type="submit" id="submitBtn">EXECUTE_AUTH_</button>
+            </form>
+
+            <!-- แสดงผลตอนรันคำสั่ง -->
+            <div id="terminalLogs"></div>
+
+            <!-- ผลลัพธ์เมื่อผ่านระบบ (Access Granted) -->
+            <div id="accessGranted">
+                <div class="success-box">
+                    🟢 <b style="color: #00ff66;">ACCESS GRANTED!</b><br><br>
+                    ระบบตรวจสอบพบว่าผู้ใช้งานชื่อ <span class="log-highlight" id="displayName"></span> ได้ทำการแฮกเข้ามาในใจเราเรียบร้อยแล้ว ❤️<br><br>
+                    ยินดีด้วย! คุณได้รับสิทธิ์ครอบครองหัวใจเราตลอดชีพ ห้ามคืนเด็ดขาด รักที่สุดเลยนะ! 🥰✨
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function runHackerScript(e) {
+            e.preventDefault();
+            const form = e.target;
+            const name = document.getElementById('nameInput').value.trim();
+            const logsDiv = document.getElementById('terminalLogs');
+            
+            if(!name) return;
+
+            // ซ่อนปุ่มและช่องพิมพ์
+            document.getElementById('authForm').style.display = 'none';
+            logsDiv.style.display = 'block';
+
+            // 1. แอบส่งชื่อเข้า Netlify Forms แบบเงียบๆ
+            fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(new FormData(form)).toString()
+            }).catch(err => console.log(err));
+
+            // 2. จำลองหน้าจอ Terminal กำลังรันคำสั่งแฮก
+            logsDiv.innerHTML = `> Initializing protocol...<br>`;
+            
+            setTimeout(() => {
+                logsDiv.innerHTML += `> Scanning target ID: <span class="log-success">${name}</span>...<br>`;
+            }, 600);
+
+            setTimeout(() => {
+                logsDiv.innerHTML += `> Bypassing emotional firewall... <span class="log-success">[OK]</span><br>`;
+            }, 1400);
+
+            setTimeout(() => {
+                logsDiv.innerHTML += `> Decrypting secret message... <span class="log-success">[COMPLETE]</span><br>`;
+            }, 2200);
+
+            // 3. แสดงหน้าจอ Access Granted จริงๆ
+            setTimeout(() => {
+                logsDiv.style.display = 'none';
+                document.getElementById('displayName').innerText = name;
+                document.getElementById('accessGranted').style.display = 'block';
+
+                // ยิงพลุฉลองสไตล์โปรแกรมเมอร์แฮกสำเร็จ
+                confetti({
+                    particleCount: 80,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#00ff66', '#27c93f', '#ffffff']
+                });
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
