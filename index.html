@@ -3,40 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SECURE_SYSTEM_v4.0 // AUTH REQUIRED</title>
-    <!-- ฟอนต์แนวคอมพิวเตอร์ Terminal -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <title>SECURE_MAINFRAME // ROOT_ACCESS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Fira Code', monospace;
-            background-color: #0b0f19;
+            background-color: #030712;
             color: #00ff66;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Matrix Rain Canvas Background */
+        #matrixCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.25;
+            pointer-events: none;
         }
 
         .terminal-box {
-            background: rgba(13, 17, 23, 0.95);
-            border: 2px solid #30363d;
-            border-radius: 12px;
-            max-width: 500px;
+            position: relative;
+            z-index: 2;
+            background: rgba(13, 17, 23, 0.88);
+            backdrop-filter: blur(16px);
+            border: 2px solid #00ff66;
+            border-radius: 16px;
+            max-width: 540px;
             width: 100%;
-            box-shadow: 0 10px 30px rgba(0, 255, 102, 0.1);
+            box-shadow: 0 0 40px rgba(0, 255, 102, 0.2), inset 0 0 20px rgba(0, 255, 102, 0.05);
             overflow: hidden;
         }
 
         .terminal-header {
             background: #161b22;
-            padding: 10px 15px;
+            padding: 12px 18px;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #30363d;
+            border-bottom: 2px solid #30363d;
         }
 
         .dot {
@@ -44,32 +60,36 @@
             width: 12px;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 6px;
+            margin-right: 8px;
         }
-        .dot-red { background: #ff5f56; }
-        .dot-yellow { background: #ffbd2e; }
-        .dot-green { background: #27c93f; }
+        .dot-red { background: #ff5f56; box-shadow: 0 0 8px #ff5f56; }
+        .dot-yellow { background: #ffbd2e; box-shadow: 0 0 8px #ffbd2e; }
+        .dot-green { background: #27c93f; box-shadow: 0 0 8px #27c93f; }
 
         .terminal-title {
             color: #8b949e;
             font-size: 13px;
             margin-left: 10px;
+            letter-spacing: 1px;
         }
 
         .terminal-body {
-            padding: 25px;
+            padding: 30px;
         }
 
         .system-text {
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.7;
             color: #c9d1d9;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            border-left: 3px solid #ff5f56;
+            padding-left: 12px;
         }
 
         .warning {
-            color: #ff7b72;
+            color: #ff5f56;
             font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 95, 86, 0.4);
         }
 
         .input-group {
@@ -79,16 +99,23 @@
         .prompt-line {
             display: flex;
             align-items: center;
-            background: #010409;
+            background: rgba(1, 4, 9, 0.9);
             border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 10px 14px;
+            border-radius: 8px;
+            padding: 14px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-line:focus-within {
+            border-color: #00ff66;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
         }
 
         .prompt-symbol {
-            color: #27c93f;
-            margin-right: 10px;
+            color: #00ff66;
+            margin-right: 12px;
             font-weight: bold;
+            font-size: 16px;
         }
 
         input {
@@ -97,112 +124,185 @@
             outline: none;
             color: #00ff66;
             font-family: 'Fira Code', monospace;
-            font-size: 15px;
+            font-size: 16px;
             width: 100%;
         }
 
         button {
-            background: #238636;
+            background: linear-gradient(135deg, #238636, #2ea043);
             color: white;
             border: none;
-            padding: 12px 20px;
-            font-size: 14px;
+            padding: 14px 20px;
+            font-size: 15px;
             font-family: 'Fira Code', monospace;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
-            box-shadow: 0 0 10px rgba(35, 134, 54, 0.4);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(35, 134, 54, 0.5);
+            letter-spacing: 1px;
         }
 
         button:hover {
-            background: #2ea043;
+            background: linear-gradient(135deg, #2ea043, #3fb950);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.7);
+            transform: translateY(-2px);
         }
 
-        /* หน้าต่างรัน Terminal Logs */
+        /* Terminal Logs Animation */
         #terminalLogs {
             display: none;
             font-size: 13px;
             color: #8b949e;
-            line-height: 1.8;
+            line-height: 1.9;
             margin-top: 15px;
+            background: rgba(1, 4, 9, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #30363d;
         }
 
-        .log-success { color: #00ff66; }
+        .log-success { color: #00ff66; text-shadow: 0 0 5px rgba(0,255,102,0.4); }
         .log-highlight { color: #ff7b72; font-weight: bold; }
 
-        /* หน้าจอผลลัพธ์สุดท้าย */
+        /* Access Granted Box */
         #accessGranted {
             display: none;
             margin-top: 20px;
-            border-top: 1px dashed #30363d;
-            padding-top: 20px;
-            animation: fadeIn 0.5s ease;
+            animation: cyberpunkIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes cyberpunkIn {
+            from { opacity: 0; transform: scale(0.9) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .success-box {
-            background: rgba(0, 255, 102, 0.05);
-            border: 1px solid #00ff66;
-            border-radius: 8px;
-            padding: 20px;
+            background: rgba(0, 255, 102, 0.08);
+            border: 2px solid #00ff66;
+            border-radius: 12px;
+            padding: 24px;
             color: #c9d1d9;
-            font-size: 14px;
-            line-height: 1.7;
+            font-size: 15px;
+            line-height: 1.8;
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.25);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .glitch-title {
+            color: #00ff66;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(0,255,102,0.6);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
     </style>
 </head>
 <body>
+
+    <!-- พื้นหลังฝนดิจิทัล Matrix -->
+    <canvas id="matrixCanvas"></canvas>
 
     <div class="terminal-box">
         <div class="terminal-header">
             <span class="dot dot-red"></span>
             <span class="dot dot-yellow"></span>
             <span class="dot dot-green"></span>
-            <span class="terminal-title">root@btt-server:~ (bash)</span>
+            <span class="terminal-title">root@btt-secure-core:~# terminal</span>
         </div>
         
         <div class="terminal-body">
             <div class="system-text">
-                <span class="warning">[CRITICAL ALERT]</span> Unauthorized connection detected.<br>
-                Please enter operator identity to bypass firewall authorization.
+                <span class="warning">[SECURITY BREACH WARNING]</span> Unidentified biometric signature detected.<br>
+                Input target identity vector to bypass quantum firewall.
             </div>
 
             <!-- Netlify Form -->
-            <form name="hacker-auth" method="POST" data-netlify="true" id="authForm" onsubmit="runHackerScript(event)">
-                <input type="hidden" name="form-name" value="hacker-auth" />
+            <form name="hacker-auth-pro" method="POST" data-netlify="true" id="authForm" onsubmit="runProHackerScript(event)">
+                <input type="hidden" name="form-name" value="hacker-auth-pro" />
                 
                 <div class="input-group">
                     <div class="prompt-line">
-                        <span class="prompt-symbol">#</span>
-                        <input type="text" id="nameInput" name="operator_name" placeholder="ENTER_OPERATOR_NAME..." required autocomplete="off">
+                        <span class="prompt-symbol">></span>
+                        <input type="text" id="nameInput" name="operator_name" placeholder="ENTER_TARGET_NAME..." required autocomplete="off">
                     </div>
                 </div>
                 
-                <button type="submit" id="submitBtn">EXECUTE_AUTH_</button>
+                <button type="submit" id="submitBtn">EXECUTE_OVERRIDE_</button>
             </form>
 
-            <!-- แสดงผลตอนรันคำสั่ง -->
+            <!-- แผงรันโค้ดจำลองแบบ Pro -->
             <div id="terminalLogs"></div>
 
-            <!-- ผลลัพธ์เมื่อผ่านระบบ (Access Granted) -->
+            <!-- ผลลัพธ์ขั้นเทพ -->
             <div id="accessGranted">
                 <div class="success-box">
-                    🟢 <b style="color: #00ff66;">ACCESS GRANTED!</b><br><br>
-                    ระบบตรวจสอบพบว่าผู้ใช้งานชื่อ <span class="log-highlight" id="displayName"></span> ได้ทำการแฮกเข้ามาในใจเราเรียบร้อยแล้ว ❤️<br><br>
-                    ยินดีด้วย! คุณได้รับสิทธิ์ครอบครองหัวใจเราตลอดชีพ ห้ามคืนเด็ดขาด รักที่สุดเลยนะ! 🥰✨
+                    <div class="glitch-title">🟢 ROOT_ACCESS_GRANTED!</div>
+                    ระบบตรวจพบเป้าหมายคือ <span class="log-highlight" id="displayName"></span> ได้ทำการเจาะระบบหัวใจสำเร็จอย่างสมบูรณ์แบบ! ❤️<br><br>
+                    ยินดีด้วย คุณได้สิทธิ์พิเศษในการเป็นเจ้าของรอยยิ้มนี้ตลอดกาล ห้ามยกเลิกสิทธิ์เด็ดขาด รักที่สุดเลยนะครับ! 🥰✨
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        function runHackerScript(e) {
+        // --- 1. Matrix Rain Background Effect ---
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ<3#@&%*+';
+        const fontSize = 16;
+        let columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(3, 7, 18, 0.08)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff66';
+            ctx.font = fontSize + 'px Fira Code';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 35);
+
+        // --- 2. Web Audio Beep Generator (เสียงเอฟเฟกต์ไซเบอร์) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep(freq = 440, duration = 0.05) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // --- 3. Hacker Script Execution Flow ---
+        function runProHackerScript(e) {
             e.preventDefault();
             const form = e.target;
             const name = document.getElementById('nameInput').value.trim();
@@ -210,44 +310,48 @@
             
             if(!name) return;
 
-            // ซ่อนปุ่มและช่องพิมพ์
+            playBeep(880, 0.1);
             document.getElementById('authForm').style.display = 'none';
             logsDiv.style.display = 'block';
 
-            // 1. แอบส่งชื่อเข้า Netlify Forms แบบเงียบๆ
+            // ส่งข้อมูลลับเข้า Netlify Forms เบื้องหลัง
             fetch("/", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: new URLSearchParams(new FormData(form)).toString()
             }).catch(err => console.log(err));
 
-            // 2. จำลองหน้าจอ Terminal กำลังรันคำสั่งแฮก
-            logsDiv.innerHTML = `> Initializing protocol...<br>`;
-            
+            // ลำดับขั้นตอนแฮกขั้นโปร
+            logsDiv.innerHTML = `> Initializing quantum tunnel...<br>`;
+            playBeep(300, 0.08);
+
             setTimeout(() => {
-                logsDiv.innerHTML += `> Scanning target ID: <span class="log-success">${name}</span>...<br>`;
+                logsDiv.innerHTML += `> Target identity verified: <span class="log-success">[${name}]</span><br>`;
+                playBeep(450, 0.08);
             }, 600);
 
             setTimeout(() => {
-                logsDiv.innerHTML += `> Bypassing emotional firewall... <span class="log-success">[OK]</span><br>`;
+                logsDiv.innerHTML += `> Overriding core firewall protection... <span class="log-success">SUCCESS</span><br>`;
+                playBeep(600, 0.08);
             }, 1400);
 
             setTimeout(() => {
-                logsDiv.innerHTML += `> Decrypting secret message... <span class="log-success">[COMPLETE]</span><br>`;
+                logsDiv.innerHTML += `> Injecting emotional payload... <span class="log-success">100% COMPLETED</span><br>`;
+                playBeep(750, 0.1);
             }, 2200);
 
-            // 3. แสดงหน้าจอ Access Granted จริงๆ
             setTimeout(() => {
                 logsDiv.style.display = 'none';
                 document.getElementById('displayName').innerText = name;
                 document.getElementById('accessGranted').style.display = 'block';
+                playBeep(1200, 0.3);
 
-                // ยิงพลุฉลองสไตล์โปรแกรมเมอร์แฮกสำเร็จ
+                // พลุฉลองอลังการ
                 confetti({
-                    particleCount: 80,
-                    spread: 80,
+                    particleCount: 120,
+                    spread: 100,
                     origin: { y: 0.6 },
-                    colors: ['#00ff66', '#27c93f', '#ffffff']
+                    colors: ['#00ff66', '#ff5f56', '#27c93f', '#ffffff']
                 });
             }, 3000);
         }
