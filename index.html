@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>มีบางอย่างอยากบอกเธอ 💌</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mali:wght@300;400;600;700&family=Dancing+Script:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+      :root {
+        --plum: #2b1033;
+        --wine: #5a1d4a;
+        --rose: #ff7aa8;
+        --blush: #ffd6e3;
+        --cream: #fff3f7;
+        --gold: #ffd28a;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: 'Mali', 'Sarabun', sans-serif;
+        color: var(--cream);
+        overflow: hidden;
+        background: radial-gradient(
+          120% 90% at 50% 110%,
+          #c2457d 0%,
+          var(--wine) 38%,
+          var(--plum) 75%
+        );
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      canvas#fx {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .glow {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        width: 70vmin;
+        height: 70vmin;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+          circle,
+          rgba(255, 122, 168, 0.28),
+          transparent 65%
+        );
+        animation: breathe 5s ease-in-out infinite;
+        z-index: 0;
+      }
+      @keyframes breathe {
+        50% {
+          transform: translate(-50%, -50%) scale(1.25);
+          opacity: 0.7;
+        }
+      }
+
+      .scene {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 28px;
+        z-index: 1;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 1.1s ease, visibility 1.1s;
+      }
+      .scene.on {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .script {
+        font-family: 'Dancing Script', cursive;
+        font-size: clamp(34px, 9vw, 54px);
+        color: var(--blush);
+        text-shadow: 0 0 24px rgba(255, 122, 168, 0.8);
+      }
+      h1 {
+        font-weight: 700;
+        font-size: clamp(26px, 7vw, 40px);
+        line-height: 1.5;
+        text-shadow: 0 0 30px rgba(255, 122, 168, 0.6);
+      }
+      p.sub {
+        font-weight: 300;
+        font-size: clamp(15px, 4vw, 18px);
+        line-height: 1.9;
+        color: var(--blush);
+        max-width: 30em;
+        margin-top: 14px;
+      }
+
+      .envelope {
+        font-size: clamp(84px, 24vw, 128px);
+        animation: float 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 28px rgba(255, 122, 168, 0.9));
+        cursor: pointer;
+        background: none;
+        border: 0;
+      }
+      @keyframes float {
+        50% {
+          transform: translateY(-14px) rotate(-3deg);
+        }
+      }
+
+      .btn {
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 17px;
+        color: #fff;
+        border: 0;
+        border-radius: 999px;
+        cursor: pointer;
+        padding: 15px 34px;
+        background: linear-gradient(135deg, #ff7aa8, #ff4f8b);
+        box-shadow: 0 8px 30px rgba(255, 79, 139, 0.55);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .btn:hover {
+        transform: scale(1.06);
+      }
+      .btn:focus-visible,
+      .nope:focus-visible,
+      #mute:focus-visible,
+      input:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 3px;
+      }
+
+      .field {
+        margin: 26px 0 22px;
+        width: min(380px, 86vw);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1.5px solid rgba(255, 214, 227, 0.5);
+        border-radius: 999px;
+        padding: 6px 8px;
+        backdrop-filter: blur(6px);
+      }
+      .field input {
+        width: 100%;
+        background: transparent;
+        border: 0;
+        outline: none;
+        text-align: center;
+        color: #fff;
+        font-family: inherit;
+        font-size: 19px;
+        padding: 11px 14px;
+      }
+      .field input::placeholder {
+        color: rgba(255, 214, 227, 0.65);
+      }
+
+      #line {
+        min-height: 5.5em;
+        font-size: clamp(20px, 5.6vw, 30px);
+        font-weight: 600;
+        line-height: 1.7;
+        max-width: 20em;
+        text-shadow: 0 0 22px rgba(255, 122, 168, 0.7);
+      }
+      #line::after {
+        content: '|';
+        margin-left: 2px;
+        animation: blink 1s steps(1) infinite;
+        color: var(--rose);
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      .heartbeat {
+        font-size: clamp(70px, 20vw, 104px);
+        animation: beat 1.2s ease-in-out infinite;
+        filter: drop-shadow(0 0 26px #ff4f8b);
+      }
+      @keyframes beat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        14% {
+          transform: scale(1.22);
+        }
+        28% {
+          transform: scale(1);
+        }
+        42% {
+          transform: scale(1.14);
+        }
+      }
+
+      .choices {
+        position: relative;
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 34px;
+        flex-wrap: wrap;
+        min-height: 64px;
+      }
+      .btn.yes {
+        font-size: 21px;
+        padding: 17px 44px;
+        animation: pulse 1.8s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 122, 168, 0.7);
+        }
+        100% {
+          box-shadow: 0 0 0 24px rgba(255, 122, 168, 0);
+        }
+      }
+      .nope {
+        font-family: inherit;
+        font-size: 15px;
+        color: var(--blush);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 214, 227, 0.4);
+        border-radius: 999px;
+        padding: 12px 24px;
+        cursor: pointer;
+        transition: left 0.25s, top 0.25s;
+      }
+
+      .letter {
+        background: rgba(255, 243, 247, 0.1);
+        border: 1px solid rgba(255, 214, 227, 0.45);
+        border-radius: 22px;
+        padding: 26px 24px;
+        max-width: 26em;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 60px rgba(255, 122, 168, 0.3);
+        font-size: clamp(15px, 4.2vw, 18px);
+        line-height: 2;
+        margin-top: 18px;
+      }
+      .letter b {
+        color: var(--gold);
+      }
+
+      #mute {
+        position: fixed;
+        top: calc(14px + env(safe-area-inset-top, 0px));
+        right: 14px;
+        z-index: 5;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 214, 227, 0.5);
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        display: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition-duration: 0.01s !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="fx"></canvas>
+    <div class="glow"></div>
+    <button id="mute" aria-label="เปิดหรือปิดเสียงเพลง">🔊</button>
+    <audio id="bgm" src="music.mp3" loop preload="auto"></audio>
+
+    <!-- 1 ซองจดหมาย -->
+    <section class="scene on" id="s1">
+      <button class="envelope" id="open" aria-label="รับพัสดุ">📦</button>
+      <p class="script" style="margin-top: 18px">special delivery</p>
+      <p class="sub">
+        มีพัสดุด่วนพิเศษส่งมาถึงคุณ<br />แตะที่กล่องเพื่อรับของได้เลย
+      </p>
+    </section>
+
+    <!-- 2 ใส่ชื่อ (Netlify Form) -->
+    <section class="scene" id="s2">
+      <h1>ลงชื่อผู้รับพัสดุ 📝</h1>
+      <p class="sub">
+        พัสดุชิ้นนี้ส่งแบบพิเศษ<br />ต้องยืนยันชื่อผู้รับก่อนถึงจะเปิดได้นะ
+      </p>
+      <form name="hacker-auth" method="POST" data-netlify="true" id="authForm">
+        <input type="hidden" name="form-name" value="hacker-auth" />
+        <input type="hidden" name="answer" id="answerField" value="" />
+        <div class="field">
+          <input
+            type="text"
+            id="nameInput"
+            name="operator_name"
+            placeholder="ชื่อ-ชื่อเล่นผู้รับ"
+            required
+            autocomplete="off"
+          />
+        </div>
+        <button class="btn" type="submit">ยืนยันรับพัสดุ</button>
+      </form>
+      <div id="check" class="sub" style="display: none; line-height: 2.2"></div>
+    </section>
+
+    <!-- 3 ข้อความทีละบรรทัด -->
+    <section class="scene" id="s3">
+      <div class="script" id="hi" style="margin-bottom: 26px"></div>
+      <div id="line"></div>
+    </section>
+
+    <!-- 4 ขอเป็นแฟน -->
+    <section class="scene" id="s4">
+      <div class="heartbeat">💗</div>
+      <h1 style="margin-top: 18px" id="ask"></h1>
+      <p class="sub">ตอบจากใจได้เลยนะ เราพร้อมฟังเสมอ</p>
+      <div class="choices" id="choices">
+        <button class="btn yes" id="yes">เป็นสิ ❤️</button>
+        <button class="nope" id="no">ขอคิดดูก่อน</button>
+      </div>
+    </section>
+
+    <!-- 5 ตอบตกลง -->
+    <section class="scene" id="s5">
+      <div class="heartbeat">🥹💖</div>
+      <p class="script" style="margin-top: 10px">thank you</p>
+      <div class="letter">
+        ขอบคุณที่ยอมให้เรามีที่ยืนในหัวใจเธอนะ<br />
+        จากนี้เราจะดูแล <b>เธอ</b> ให้ดีที่สุด<br />
+        ทั้งวันที่ยิ้ม และวันที่เหนื่อยเลย<br />
+        <b>รักที่สุดเลยนะงับ</b> 🥰✨
+      </div>
+    </section>
+
+    <script>
+      const $ = id => document.getElementById(id)
+      const wait = ms => new Promise(r => setTimeout(r, ms))
+      const bgm = $('bgm'),
+        mute = $('mute')
+      /* ใส่ชื่อ/ชื่อเล่นน้องตรงนี้ ถ้าเว้นว่าง '' จะกลับไปมีหน้าให้น้องกรอกชื่อเอง */
+      const TARGET_NAME = ''
+      let userName = ''
+
+      function show(id) {
+        document
+          .querySelectorAll('.scene')
+          .forEach(s => s.classList.toggle('on', s.id === id))
+      }
+
+      /* ---------- กลีบซากุระและหัวใจลอย ---------- */
+      const cv = $('fx'),
+        cx = cv.getContext('2d')
+      let W,
+        H,
+        bits = []
+      function resize() {
+        W = cv.width = innerWidth * devicePixelRatio
+        H = cv.height = innerHeight * devicePixelRatio
+      }
+      addEventListener('resize', resize)
+      resize()
+      const glyphs = ['🌸', '💗', '✨', '💕', '🌸']
+      function spawn(burst) {
+        bits.push({
+          x: Math.random() * W,
+          y: burst ? H * 1.05 : -40,
+          s: (14 + Math.random() * 22) * devicePixelRatio,
+          vy: (burst ? -1 : 1) * (0.5 + Math.random() * 1.4) * devicePixelRatio,
+          vx: (Math.random() - 0.5) * 0.8 * devicePixelRatio,
+          r: Math.random() * 6,
+          vr: (Math.random() - 0.5) * 0.03,
+          g: glyphs[Math.floor(Math.random() * glyphs.length)],
+          a: 0.35 + Math.random() * 0.55
+        })
+      }
+      let rate = 0.12
+      ;(function loop() {
+        cx.clearRect(0, 0, W, H)
+        if (Math.random() < rate && bits.length < 90) spawn(false)
+        bits = bits.filter(b => b.y > -80 && b.y < H + 80)
+        for (const b of bits) {
+          b.x += b.vx + Math.sin(b.y / 90) * 0.5
+          b.y += b.vy
+          b.r += b.vr
+          cx.save()
+          cx.translate(b.x, b.y)
+          cx.rotate(b.r)
+          cx.globalAlpha = b.a
+          cx.font = b.s + 'px serif'
+          cx.textAlign = 'center'
+          cx.fillText(b.g, 0, 0)
+          cx.restore()
+        }
+        requestAnimationFrame(loop)
+      })()
+      function risingHearts(n) {
+        for (let i = 0; i < n; i++) setTimeout(() => spawn(true), i * 45)
+      }
+
+      /* ---------- พิมพ์ข้อความทีละตัว ---------- */
+      async function type(el, text, speed = 70) {
+        el.textContent = ''
+        for (const ch of text) {
+          el.textContent += ch
+          await wait(speed)
+        }
+      }
+
+      /* ---------- ฉาก 1 → 2 ---------- */
+      $('open').onclick = () => {
+        bgm.volume = 0
+        bgm.play().catch(() => {})
+        let v = 0
+        const f = setInterval(() => {
+          v = Math.min(0.8, v + 0.04)
+          bgm.volume = v
+          if (v >= 0.8) clearInterval(f)
+        }, 150)
+        mute.style.display = 'block'
+        rate = 0.3
+        if (TARGET_NAME) {
+          userName = TARGET_NAME
+          fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              'form-name': 'hacker-auth',
+              operator_name: userName,
+              answer: 'เปิดจดหมายแล้ว'
+            }).toString()
+          }).catch(() => {})
+          story()
+        } else {
+          show('s2')
+          setTimeout(() => $('nameInput').focus(), 900)
+        }
+      }
+      mute.onclick = () => {
+        if (bgm.paused) {
+          bgm.play()
+          mute.textContent = '🔊'
+        } else {
+          bgm.pause()
+          mute.textContent = '🔇'
+        }
+      }
+
+      /* ---------- ฉาก 2 → 3 ---------- */
+      $('authForm').addEventListener('submit', e => {
+        e.preventDefault()
+        userName = $('nameInput').value.trim()
+        if (!userName) return
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(new FormData(e.target)).toString()
+        }).catch(() => {})
+        fakeCheck()
+      })
+
+      async function fakeCheck() {
+        $('authForm').style.display = 'none'
+        const c = $('check')
+        c.style.display = 'block'
+        c.innerHTML = ''
+        const steps = [
+          'กำลังตรวจสอบรายชื่อผู้รับ...',
+          'ค้นหาในระบบจัดส่ง... พบ 1 รายการ',
+          'ยืนยันตัวตน ✅',
+          'พัสดุนี้ไม่ใช่ของธรรมดา เตรียมใจไว้นะ 💌'
+        ]
+        for (const t of steps) {
+          c.append(t, document.createElement('br'))
+          await wait(1100)
+        }
+        await wait(500)
+        story()
+      }
+
+      async function story() {
+        show('s3')
+        await wait(1200)
+        $('hi').textContent = 'ถึง ' + userName + ' 🌷'
+        await wait(1400)
+        const lines = [
+          'เราไม่เก่งเรื่องคำหวานเท่าไหร่หรอก',
+          'แต่ทุกครั้งที่ได้คุยกับเธอ\nวันธรรมดาของเราก็พิเศษขึ้นมาเลย',
+          'รอยยิ้มของเธอ\nทำให้หัวใจเราเต้นผิดจังหวะทุกที',
+          'เราเลยอยากบอกอะไรบางอย่างกับเธอ...'
+        ]
+        const el = $('line')
+        for (const t of lines) {
+          el.style.whiteSpace = 'pre-line'
+          await type(el, t, 75)
+          await wait(1900)
+        }
+        proposal()
+      }
+
+      /* ---------- ฉาก 4 ---------- */
+      async function proposal() {
+        show('s4')
+        rate = 0.45
+        await wait(900)
+        $('ask').textContent = 'เป็นแฟนกับเรานะ ' + userName + ' ได้ไหม?'
+      }
+
+      /* ปุ่ม "ขอคิดดูก่อน" วิ่งหนี และเล็กลงเรื่อยๆ */
+      const no = $('no'),
+        yes = $('yes')
+      let dodge = 0
+      function run(e) {
+        e.preventDefault()
+        dodge++
+        const box = $('choices').getBoundingClientRect()
+        no.style.position = 'fixed'
+        const x = 20 + Math.random() * (innerWidth - 150),
+          y = 80 + Math.random() * (innerHeight - 160)
+        no.style.left = x + 'px'
+        no.style.top = y + 'px'
+        no.style.transform = 'scale(' + Math.max(0.55, 1 - dodge * 0.06) + ')'
+        yes.style.transform = 'scale(' + Math.min(1.5, 1 + dodge * 0.07) + ')'
+        if (dodge > 4)
+          no.textContent = ['ไม่ได้นะ 🥺', 'จับไม่ได้หรอก', 'ตอบเป็นสิเถอะนะ'][
+            dodge % 3
+          ]
+      }
+      no.addEventListener('pointerenter', run)
+      no.addEventListener('click', run)
+      no.addEventListener('touchstart', run, { passive: false })
+
+      /* ---------- ฉาก 5: ตอบตกลง ---------- */
+      yes.onclick = () => {
+        $('answerField').value = 'YES ❤️'
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            'form-name': 'hacker-auth',
+            operator_name: userName,
+            answer: 'YES ❤️'
+          }).toString()
+        }).catch(() => {})
+        no.style.display = 'none'
+        show('s5')
+        rate = 0.7
+        risingHearts(70)
+        const heart = confetti.shapeFromText
+          ? confetti.shapeFromText({ text: '💖', scalar: 3 })
+          : 'circle'
+        const end = Date.now() + 5500
+        ;(function shoot() {
+          confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 70,
+            origin: { x: 0, y: 0.75 },
+            shapes: [heart],
+            scalar: 3,
+            colors: ['#ff7aa8', '#ffd6e3', '#ffd28a']
+          })
+          confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 70,
+            origin: { x: 1, y: 0.75 },
+            shapes: [heart],
+            scalar: 3,
+            colors: ['#ff7aa8', '#ffd6e3', '#ffd28a']
+          })
+          if (Date.now() < end) requestAnimationFrame(shoot)
+        })()
+      }
+    </script>
+  </body>
+</html>
