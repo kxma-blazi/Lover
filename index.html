@@ -309,7 +309,7 @@
     <section class="scene" id="s2">
       <h1>ลงชื่อผู้รับพัสดุ 📝</h1>
       <p class="sub">
-        พัสดุชิ้นนี้ส่งด่วนแบบพิเศษ<br />ต้องยืนยันชื่อผู้รับก่อนถึงจะเปิดได้นะครับ
+        พัสดุชิ้นนี้ส่งด่วนแบบพิเศษ<br />ต้องเซ็นยืนยันชื่อผู้รับก่อนถึงจะเปิดได้นะครับ
       </p>
       <form name="hacker-auth" method="POST" data-netlify="true" id="authForm">
         <input type="hidden" name="form-name" value="hacker-auth" />
@@ -319,7 +319,7 @@
             type="text"
             id="nameInput"
             name="operator_name"
-            placeholder="ชื่อ-ชื่อเล่นผู้รับ"
+            placeholder="ชื่อผู้รับ"
             required
             autocomplete="off"
           />
@@ -339,7 +339,7 @@
     <section class="scene" id="s4">
       <div class="heartbeat">💗</div>
       <h1 style="margin-top: 18px" id="ask"></h1>
-      <p class="sub">ตอบจากใจได้เลยนะ เราพร้อมฟังเสมอ</p>
+      <p class="sub">ตอบจากใจได้เลยนะ</p>
       <div class="choices" id="choices">
         <button class="btn yes" id="yes">เป็นสิ ❤️</button>
         <button class="nope" id="no">ขอคิดดูก่อน</button>
@@ -509,10 +509,10 @@
         $('hi').textContent = 'ถึง ' + userName + ' 🌷'
         await wait(1400)
         const lines = [
-          'เค้าไม่เก่งเรื่องคำหวานเท่าไหร่หรอก',
-          'แต่ทุกครั้งที่ได้คุยกับหนู\nวันธรรมดาของเค้าก็พิเศษขึ้นมาเลย',
-          'รอยยิ้มของเธอ\nทำให้หัวใจเค้าเต้นผิดจังหวะทุกที',
-          'เค้าเลยอยากบอกอะไรบางอย่างกับเธอน่ะ...'
+          'เราไม่เก่งเรื่องคำหวานเท่าไหร่หรอก',
+          'แต่ทุกครั้งที่ได้คุยกับเธอ\nวันธรรมดาของเราก็พิเศษขึ้นมาเลย',
+          'รอยยิ้มของเธอ\nทำให้หัวใจเราเต้นผิดจังหวะทุกที',
+          'เราเลยอยากบอกอะไรบางอย่างกับเธอ...'
         ]
         const el = $('line')
         for (const t of lines) {
@@ -528,7 +528,7 @@
         show('s4')
         rate = 0.45
         await wait(900)
-        $('ask').textContent = 'เป็นแฟนกับเค้านะ ' + userName + ' ได้ไหม?'
+        $('ask').textContent = 'เป็นแฟนกับเรานะ ' + userName + ' ได้ไหม?'
       }
 
       /* ปุ่ม "ขอคิดดูก่อน" วิ่งหนี และเล็กลงเรื่อยๆ */
