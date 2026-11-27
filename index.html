@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -382,6 +381,31 @@
       color: var(--gold);
     }
 
+    .sticker-row {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .sticker-btn {
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--cream);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 214, 227, 0.38);
+      border-radius: 999px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .sticker-btn:hover {
+      transform: scale(1.05);
+      background: rgba(255, 122, 168, 0.25);
+    }
+
     .secret-box {
       margin-top: 14px;
       padding-top: 12px;
@@ -544,24 +568,24 @@
     </div>
   </section>
 
-  <!-- 4. ชวนทำความรู้จักกันต่อ -->
+  <!-- 4. สารภาพความดีใจแบบตรงไปตรงมา -->
   <section class="scene" id="s4">
     <div class="heartbeat">💗</div>
 
     <h1 style="margin-top: 16px" id="ask"></h1>
 
     <p class="sub">
-      ไม่ต้องรีบกำหนดอะไรเลยนะ<br />
-      เราค่อย ๆ เรียนรู้จักกันไปก็พอ 😊
+      สารภาพตรง ๆ เลยนะ<br />
+      ดีใจมาก ๆ จริง ๆ ที่ได้คุยและได้รู้จักกัน 😊
     </p>
 
     <div class="choices" id="choices">
       <button class="btn yes" id="yes">
-        อยากคุยกันต่อ 😊
+        ดีใจเหมือนกันที่ได้รู้จัก 😊
       </button>
 
       <button class="nope" id="slow">
-        ค่อย ๆ รู้จักกันไปนะ 🌷
+        เขินนิดหน่อย ค่อย ๆ คุยกันนะ 🌷
       </button>
     </div>
   </section>
@@ -577,6 +601,12 @@
     <div class="letter">
       <div id="finalLetter"></div>
 
+      <div class="sticker-row">
+        <button class="sticker-btn" data-burst="🌸">โปรยซากุระ 🌸</button>
+        <button class="sticker-btn" data-burst="💗">ส่งหัวใจ 💗</button>
+        <button class="sticker-btn" data-burst="✨">เสกวิ้ง ๆ ✨</button>
+      </div>
+
       <div class="coupon">
         🎟️ คูปองชวนกินขนม/น้ำแก้วโปรด 1 สิทธิ์<br />
         <span style="font-weight: 300">
@@ -590,8 +620,8 @@
         </button>
 
         <div class="secret-note" id="secretNote">
-          P.S. ไม่รู้เหมือนกันว่าในอนาคตเราจะได้รู้จักกันมากแค่ไหน
-          แต่ตอนนี้เราดีใจนะที่ได้เริ่มรู้จักด้าย 😊🌷
+          P.S. จริง ๆ คือแอบยิ้มทุกครั้งที่เห็นแจ้งเตือนว่าด้ายทักมา
+          ดีใจมาก ๆ จริง ๆ นะที่ได้รู้จักกัน 😊🌷
         </div>
       </div>
     </div>
@@ -611,15 +641,11 @@
     let soundMuted = false;
     let usingFallback = false;
 
-    /* ---------- เปลี่ยนฉาก ---------- */
-
     function show(id) {
       document.querySelectorAll('.scene').forEach(scene => {
         scene.classList.toggle('on', scene.id === id);
       });
     }
-
-    /* ---------- ส่งข้อมูล Netlify ---------- */
 
     function sendNetlify(payload) {
       return fetch('/', {
@@ -635,8 +661,6 @@
         }).toString()
       }).catch(() => {});
     }
-
-    /* ---------- เสียงระฆังเบา ๆ ---------- */
 
     function playTone(freq, duration = 0.25, volume = 0.05) {
       if (soundMuted) return;
@@ -713,8 +737,6 @@
       }
     };
 
-    /* ---------- กลีบซากุระและหัวใจลอย ---------- */
-
     const cv = $('fx');
     const cx = cv.getContext('2d');
 
@@ -736,7 +758,7 @@
 
     const glyphs = ['🌸', '💗', '✨', '💕', '🌷'];
 
-    function spawn(burst, customX, customY) {
+    function spawn(burst, customX, customY, forcedGlyph) {
       const dpr = Math.min(devicePixelRatio || 1, 2);
 
       bits.push({
@@ -747,7 +769,7 @@
         vx: (Math.random() - 0.5) * 0.9 * dpr,
         r: Math.random() * 6,
         vr: (Math.random() - 0.5) * 0.025,
-        g: glyphs[Math.floor(Math.random() * glyphs.length)],
+        g: forcedGlyph || glyphs[Math.floor(Math.random() * glyphs.length)],
         a: 0.4 + Math.random() * 0.5
       });
     }
@@ -791,13 +813,11 @@
       requestAnimationFrame(loop);
     })();
 
-    function risingHearts(count) {
+    function risingHearts(count, forcedGlyph) {
       for (let i = 0; i < count; i++) {
-        setTimeout(() => spawn(true), i * 40);
+        setTimeout(() => spawn(true, undefined, undefined, forcedGlyph), i * 35);
       }
     }
-
-    /* ---------- เคาะกล่อง 3 ครั้ง ---------- */
 
     let knocks = 0;
 
@@ -844,20 +864,18 @@
       }
     };
 
-    /* ---------- เลือกอารมณ์วันนี้ ---------- */
-
     const moodReplies = {
       chill:
-        'ดีเลย วันสบาย ๆ แบบนี้\nเหมาะกับการอ่านอะไรน่ารัก ๆ พอดี 😊',
+        'วันชิลล์ ๆ แบบนี้\nดีใจนะที่ได้มีพื้นที่มานั่งคุยกัน 😊',
 
       sleepy:
-        'ถ้าง่วงก็พักผ่อนเยอะ ๆ นะ\nขอส่งข้อความเล็ก ๆ มาเติมรอยยิ้มให้ 🌙',
+        'ถ้าง่วงก็พักผ่อนเยอะ ๆ นะ\nแค่อยากแวะมาบอกว่าดีใจที่ได้รู้จักกัน 🌙',
 
       tired:
-        'ถ้าวันนี้เหนื่อยมามากแล้ว\nขอให้พัสดุชิ้นนี้เป็นกำลังใจเล็ก ๆ นะ 🔋',
+        'ถ้าวันนี้เหนื่อยมามากแล้ว\nขอส่งความดีใจเล็ก ๆ ที่ได้รู้จักกันไปให้ 🔋',
 
       happy:
-        'วันอารมณ์ดีแบบนี้\nขอแวะมาเพิ่มรอยยิ้มให้อีกนิดนะ ✨'
+        'วันอารมณ์ดีแบบนี้\nยิ่งดีใจเข้าไปใหญ่เลยที่ได้คุยกับด้าย ✨'
     };
 
     document.querySelectorAll('.mood-btn').forEach(button => {
@@ -874,8 +892,6 @@
       };
     });
 
-    /* ---------- พิมพ์ข้อความทีละตัว ---------- */
-
     async function type(element, text, speed = 60) {
       element.textContent = '';
 
@@ -884,8 +900,6 @@
         await wait(speed);
       }
     }
-
-    /* ---------- เนื้อเรื่อง ---------- */
 
     async function story() {
       show('s3');
@@ -898,14 +912,12 @@
 
       const lines = [
         moodReplies[selectedMood],
-        'จริง ๆ เราก็เพิ่งเริ่มได้คุยกันเองเนอะ',
-        'อาจจะยังมีอีกหลายเรื่องที่เรายังไม่รู้จักกัน',
-        'แต่เราดีใจนะ ที่ได้มีโอกาสรู้จักด้าย',
-        'ชอบเวลาที่เราได้คุยและแลกเปลี่ยนเรื่องราวกัน',
-        'เราอยากค่อย ๆ เรียนรู้จักกันไปทีละนิด',
-        'ไม่ต้องรีบกำหนดว่าความสัมพันธ์นี้จะเป็นแบบไหน',
-        'แค่ปล่อยให้เวลาได้พาเราไปรู้จักกันมากขึ้น',
-        'เลยตั้งใจทำข้อความเล็ก ๆ นี้มาให้ครับ 😊'
+        'จริง ๆ อยากบอกตรง ๆ แบบไม่อ้อมค้อมเลย',
+        'ว่าดีใจมาก ๆ เลยที่ได้คุยกับด้าย',
+        'ดีใจมากจริง ๆ ที่ได้รู้จักกัน',
+        'จากคนที่ไม่เคยรู้จักกันเลย\nจนได้มานั่งคุยแลกเรื่องราวกันแบบนี้',
+        'มันรู้สึกดีเกินคาดมาก ๆ เลยนะ 😊',
+        'ไม่ต้องรีบไปไหนหรอก\nแค่ดีใจที่มีด้ายเข้ามาอยู่ในวันธรรมดาของกัน'
       ];
 
       const element = $('line');
@@ -917,14 +929,12 @@
         progress.style.width =
           `${((i + 1) / lines.length) * 100}%`;
 
-        await type(element, lines[i], 58);
-        await wait(1250);
+        await type(element, lines[i], 56);
+        await wait(1350);
       }
 
       proposal();
     }
-
-    /* ---------- ฉาก 4: ชวนคุยกันต่อแบบสบาย ๆ ---------- */
 
     const yes = $('yes');
     const slow = $('slow');
@@ -937,10 +947,8 @@
       await wait(750);
 
       $('ask').textContent =
-        `จากนี้เราค่อย ๆ ทำความรู้จัก${TARGET_NAME}ไปเรื่อย ๆ ได้ไหม?`;
+        `ดีใจมาก ๆ เลยที่ได้รู้จัก${TARGET_NAME}นะ 💗\nจากนี้เรามาคุยกันไปเรื่อย ๆ แบบนี้ได้ไหม?`;
     }
-
-    /* ---------- จบเรื่องราว ---------- */
 
     function finish(answerLabel, message) {
       yes.disabled = true;
@@ -1002,41 +1010,44 @@
       })();
     }
 
-    /* ---------- ปุ่มเลือกคำตอบ ---------- */
-
     yes.onclick = () => {
       finish(
-        'yes (อยากคุยกันต่อ)',
+        'ดีใจเหมือนกันที่ได้รู้จัก',
 
-        `เย้ ขอบคุณนะ <b>${TARGET_NAME}</b> 😊💗<br /><br />` +
+        `ดีใจมาก ๆ เหมือนกันนะ <b>${TARGET_NAME}</b> 😊💗<br /><br />` +
 
-        'เราดีใจนะที่ได้มีโอกาสคุยกับด้ายต่อ<br />' +
+        'ขอบคุณที่แวะเข้ามาคุยและทำให้ได้รู้จักกัน<br />' +
 
-        'ต่อจากนี้ก็มาแบ่งปันเรื่องราวของกันและกัน<br />' +
+        'ทุกเรื่องที่เล่า ทุกบทสนทนาเล็ก ๆ น้อย ๆ<br />' +
 
-        'มีเรื่องสนุก ๆ ก็เล่าให้ฟัง มีวันที่เหนื่อยก็พักได้<br /><br />' +
+        'สำหรับเรา มันมีความหมายมากจริง ๆ นะ<br /><br />' +
 
-        '<b>หวังว่าเราจะได้รู้จักกันมากขึ้นในทุก ๆ วันนะ</b> 🌷'
+        '<b>ดีใจมาก ๆ เลยที่ได้รู้จักด้ายนะ</b> 🌷✨'
       );
     };
 
     slow.onclick = () => {
       finish(
-        'ค่อย ๆ ทำความรู้จักกัน',
+        'เขินนิดหน่อย ค่อย ๆ คุยกันนะ',
 
-        `ได้เลยนะ <b>${TARGET_NAME}</b> 🌷<br /><br />` +
+        `ไม่ต้องเขินเลยนะ <b>${TARGET_NAME}</b> 🌷<br /><br />` +
 
-        'เราเองก็อยากให้ทุกอย่างค่อยเป็นค่อยไป<br />' +
+        'เราเองก็แอบเขินตอนทำหน้านี้เหมือนกัน<br />' +
 
-        'ไม่ต้องรีบ ไม่ต้องกดดันตัวเองเลย<br />' +
+        'แต่ความรู้สึกที่อยากบอกจริง ๆ คือ<br />' +
 
-        'ค่อย ๆ คุย ค่อย ๆ เรียนรู้จักกันไปทีละนิด<br /><br />' +
+        'ดีใจมาก ๆ เลยที่ได้คุยและได้รู้จักกันนะ<br /><br />' +
 
-        '<b>แค่ได้เริ่มรู้จักกันแบบนี้ เราก็ดีใจแล้ว</b> 😊💗'
+        '<b>ค่อย ๆ คุย ค่อย ๆ รู้จักกันไปแบบสบาย ๆ นะ</b> 😊💗'
       );
     };
 
-    /* ---------- P.S. ลับ ---------- */
+    document.querySelectorAll('.sticker-btn').forEach(btn => {
+      btn.onclick = () => {
+        playTone(698.46, 0.2, 0.05);
+        risingHearts(24, btn.dataset.burst);
+      };
+    });
 
     $('secretBtn').onclick = () => {
       const note = $('secretNote');
