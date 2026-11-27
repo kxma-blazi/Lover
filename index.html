@@ -175,18 +175,10 @@
     }
 
     @keyframes knockShake {
-      0%, 100% {
-        transform: scale(1) rotate(0deg);
-      }
-      25% {
-        transform: scale(1.16) rotate(-10deg);
-      }
-      50% {
-        transform: scale(1.2) rotate(10deg);
-      }
-      75% {
-        transform: scale(1.12) rotate(-5deg);
-      }
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.16) rotate(-10deg); }
+      50% { transform: scale(1.2) rotate(10deg); }
+      75% { transform: scale(1.12) rotate(-5deg); }
     }
 
     .knock-dots {
@@ -274,9 +266,7 @@
     }
 
     @keyframes blink {
-      50% {
-        opacity: 0;
-      }
+      50% { opacity: 0; }
     }
 
     .progress-pill {
@@ -304,18 +294,10 @@
     }
 
     @keyframes beat {
-      0%, 100% {
-        transform: scale(1);
-      }
-      14% {
-        transform: scale(1.2);
-      }
-      28% {
-        transform: scale(1);
-      }
-      42% {
-        transform: scale(1.12);
-      }
+      0%, 100% { transform: scale(1); }
+      14% { transform: scale(1.2); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.12); }
     }
 
     .choices {
@@ -336,12 +318,8 @@
     }
 
     @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(255, 122, 168, 0.7);
-      }
-      100% {
-        box-shadow: 0 0 0 22px rgba(255, 122, 168, 0);
-      }
+      0% { box-shadow: 0 0 0 0 rgba(255, 122, 168, 0.7); }
+      100% { box-shadow: 0 0 0 22px rgba(255, 122, 168, 0); }
     }
 
     .nope {
@@ -433,16 +411,27 @@
       border-radius: 14px;
     }
 
-    .coupon {
+    .confession-tag {
       margin-top: 14px;
-      display: inline-block;
-      padding: 8px 16px;
-      border-radius: 12px;
-      border: 1.5px dashed var(--gold);
-      background: rgba(255, 210, 138, 0.12);
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 210, 138, 0.45);
+      background: rgba(255, 210, 138, 0.1);
       color: var(--gold);
-      font-size: 13.5px;
-      font-weight: 600;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .swap-btn {
+      margin-top: 8px;
+      font-family: inherit;
+      font-size: 12.5px;
+      color: var(--blush);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 214, 227, 0.35);
+      border-radius: 999px;
+      padding: 5px 14px;
+      cursor: pointer;
     }
 
     #mute {
@@ -462,19 +451,12 @@
     }
 
     @media (max-width: 480px) {
-      .scene {
-        padding: 18px;
-      }
-
-      .letter {
-        padding: 20px 16px;
-      }
-
+      .scene { padding: 18px; }
+      .letter { padding: 20px 16px; }
       .choices {
         flex-direction: column;
         width: 100%;
       }
-
       .choices button {
         width: min(300px, 90%);
       }
@@ -539,28 +521,16 @@
     <p class="sub">เลือกอารมณ์ตอนนี้ได้เลย</p>
 
     <div class="mood-grid">
-      <button class="mood-btn" data-mood="chill">
-        ชิลล์ ๆ สบาย ๆ ☀️
-      </button>
-
-      <button class="mood-btn" data-mood="sleepy">
-        ง่วงนิด ๆ อยากพัก 🥱
-      </button>
-
-      <button class="mood-btn" data-mood="tired">
-        เหนื่อยนิดหน่อย 🔋
-      </button>
-
-      <button class="mood-btn" data-mood="happy">
-        อารมณ์ดีมาก ✨
-      </button>
+      <button class="mood-btn" data-mood="chill">ชิลล์ ๆ สบาย ๆ ☀️</button>
+      <button class="mood-btn" data-mood="sleepy">ง่วงนิด ๆ อยากพัก 🥱</button>
+      <button class="mood-btn" data-mood="tired">เหนื่อยนิดหน่อย 🔋</button>
+      <button class="mood-btn" data-mood="happy">อารมณ์ดีมาก ✨</button>
     </div>
   </section>
 
   <!-- 3. ข้อความทีละบรรทัด -->
   <section class="scene" id="s3">
     <div class="script" id="hi" style="margin-bottom: 22px"></div>
-
     <div id="line"></div>
 
     <div class="progress-pill">
@@ -568,24 +538,24 @@
     </div>
   </section>
 
-  <!-- 4. สารภาพความดีใจแบบตรงไปตรงมา -->
+  <!-- 4. ชวนค่อย ๆ ทำความรู้จักกัน -->
   <section class="scene" id="s4">
     <div class="heartbeat">💗</div>
 
     <h1 style="margin-top: 16px" id="ask"></h1>
 
     <p class="sub">
-      สารภาพตรง ๆ เลยนะ<br />
-      ดีใจมาก ๆ จริง ๆ ที่ได้คุยและได้รู้จักกัน 😊
+      เราไม่ได้อยากรีบให้ความสัมพันธ์เป็นแบบไหนนะ<br />
+      แค่อยากค่อย ๆ รู้จักและเรียนรู้เรื่องราวของด้ายมากขึ้น 😊
     </p>
 
     <div class="choices" id="choices">
       <button class="btn yes" id="yes">
-        ดีใจเหมือนกันที่ได้รู้จัก 😊
+        เราก็ดีใจที่ได้รู้จักนะ 💗
       </button>
 
       <button class="nope" id="slow">
-        เขินนิดหน่อย ค่อย ๆ คุยกันนะ 🌷
+        ค่อย ๆ ทำความรู้จักกันนะ 🌷
       </button>
     </div>
   </section>
@@ -607,11 +577,13 @@
         <button class="sticker-btn" data-burst="✨">เสกวิ้ง ๆ ✨</button>
       </div>
 
-      <div class="coupon">
-        🎟️ คูปองชวนกินขนม/น้ำแก้วโปรด 1 สิทธิ์<br />
-        <span style="font-weight: 300">
-          ไว้วันไหนสะดวกค่อยไปด้วยกันนะ 😊
-        </span>
+      <div class="confession-tag">
+        <div id="confessionText">
+          “เราไม่รู้หรอกว่าอนาคตจะเป็นยังไง แต่ตอนนี้เราดีใจที่ได้รู้จักด้ายนะ” 🌷
+        </div>
+        <button class="swap-btn" id="swapConfession">
+          เปลี่ยนข้อความอีกประโยค ↻
+        </button>
       </div>
 
       <div class="secret-box">
@@ -620,8 +592,9 @@
         </button>
 
         <div class="secret-note" id="secretNote">
-          P.S. จริง ๆ คือแอบยิ้มทุกครั้งที่เห็นแจ้งเตือนว่าด้ายทักมา
-          ดีใจมาก ๆ จริง ๆ นะที่ได้รู้จักกัน 😊🌷
+          P.S. จริง ๆ แล้วเราอยากมีเรื่องมาเล่าให้ด้ายฟังอีกเยอะเลย
+          แล้วก็อยากฟังเรื่องราวของด้ายเหมือนกันนะ
+          ค่อย ๆ แบ่งปันเรื่องราวกันไปเรื่อย ๆ นะ 😊🌷
         </div>
       </div>
     </div>
@@ -866,16 +839,16 @@
 
     const moodReplies = {
       chill:
-        'วันชิลล์ ๆ แบบนี้\nดีใจนะที่ได้มีพื้นที่มานั่งคุยกัน 😊',
+        'วันชิลล์ ๆ แบบนี้\nก็ดีเหมือนกันนะที่เราได้แวะมาคุยกัน 😊',
 
       sleepy:
-        'ถ้าง่วงก็พักผ่อนเยอะ ๆ นะ\nแค่อยากแวะมาบอกว่าดีใจที่ได้รู้จักกัน 🌙',
+        'ถ้าง่วงก็พักผ่อนเยอะ ๆ นะ\nไว้มีแรงแล้วค่อยมาเล่าเรื่องราวให้ฟังกัน 🌙',
 
       tired:
-        'ถ้าวันนี้เหนื่อยมามากแล้ว\nขอส่งความดีใจเล็ก ๆ ที่ได้รู้จักกันไปให้ 🔋',
+        'ถ้าวันนี้เหนื่อยมามากแล้ว\nขอให้พรุ่งนี้เป็นวันที่ใจดีกับด้ายมากขึ้นนะ 🔋',
 
       happy:
-        'วันอารมณ์ดีแบบนี้\nยิ่งดีใจเข้าไปใหญ่เลยที่ได้คุยกับด้าย ✨'
+        'วันอารมณ์ดีแบบนี้\nหวังว่าจะมีเรื่องดี ๆ เกิดขึ้นกับด้ายอีกเยอะเลย ✨'
     };
 
     document.querySelectorAll('.mood-btn').forEach(button => {
@@ -912,12 +885,14 @@
 
       const lines = [
         moodReplies[selectedMood],
-        'จริง ๆ อยากบอกตรง ๆ แบบไม่อ้อมค้อมเลย',
-        'ว่าดีใจมาก ๆ เลยที่ได้คุยกับด้าย',
-        'ดีใจมากจริง ๆ ที่ได้รู้จักกัน',
-        'จากคนที่ไม่เคยรู้จักกันเลย\nจนได้มานั่งคุยแลกเรื่องราวกันแบบนี้',
-        'มันรู้สึกดีเกินคาดมาก ๆ เลยนะ 😊',
-        'ไม่ต้องรีบไปไหนหรอก\nแค่ดีใจที่มีด้ายเข้ามาอยู่ในวันธรรมดาของกัน'
+        'จริง ๆ เรามีอะไรเล็ก ๆ อยากบอกด้ายด้วยนะ',
+        'เราดีใจนะที่ได้มีโอกาสรู้จักกัน',
+        'ทั้งที่ตอนแรกเราก็เป็นแค่คนสองคนที่ยังไม่รู้จักกัน',
+        'แต่ตอนนี้กลับได้มานั่งคุย แลกเปลี่ยนเรื่องราวกัน',
+        'เราอยากรู้จักด้ายให้มากขึ้นอีกทีละนิด',
+        'อยากฟังทั้งเรื่องเล็ก ๆ ในแต่ละวัน และเรื่องที่ด้ายชอบ',
+        'ไม่ต้องรีบกำหนดอะไรเลยนะ',
+        'ค่อย ๆ คุย ค่อย ๆ เรียนรู้กันไปก็พอแล้ว 😊'
       ];
 
       const element = $('line');
@@ -947,7 +922,7 @@
       await wait(750);
 
       $('ask').textContent =
-        `ดีใจมาก ๆ เลยที่ได้รู้จัก${TARGET_NAME}นะ 💗\nจากนี้เรามาคุยกันไปเรื่อย ๆ แบบนี้ได้ไหม?`;
+        `เราอยากค่อย ๆ ทำความรู้จัก${TARGET_NAME}ให้มากขึ้นนะ 🌷`;
     }
 
     function finish(answerLabel, message) {
@@ -982,10 +957,7 @@
           particleCount: 4,
           angle: 60,
           spread: 65,
-          origin: {
-            x: 0,
-            y: 0.75
-          },
+          origin: { x: 0, y: 0.75 },
           shapes: [heart],
           scalar: 2.5,
           colors: ['#ff7aa8', '#ffd6e3', '#ffd28a']
@@ -995,10 +967,7 @@
           particleCount: 4,
           angle: 120,
           spread: 65,
-          origin: {
-            x: 1,
-            y: 0.75
-          },
+          origin: { x: 1, y: 0.75 },
           shapes: [heart],
           scalar: 2.5,
           colors: ['#ff7aa8', '#ffd6e3', '#ffd28a']
@@ -1012,34 +981,64 @@
 
     yes.onclick = () => {
       finish(
-        'ดีใจเหมือนกันที่ได้รู้จัก',
+        'เราก็ดีใจที่ได้รู้จักเหมือนกัน',
 
-        `ดีใจมาก ๆ เหมือนกันนะ <b>${TARGET_NAME}</b> 😊💗<br /><br />` +
+        `เราดีใจมาก ๆ เหมือนกันนะ <b>${TARGET_NAME}</b> 😊💗<br /><br />` +
 
-        'ขอบคุณที่แวะเข้ามาคุยและทำให้ได้รู้จักกัน<br />' +
+        'ขอบคุณที่เข้ามาเป็นส่วนหนึ่งในบทสนทนาเล็ก ๆ ของเรา<br />' +
 
-        'ทุกเรื่องที่เล่า ทุกบทสนทนาเล็ก ๆ น้อย ๆ<br />' +
+        'ขอบคุณทุกเรื่องราวที่ได้แบ่งปันให้กันฟัง<br />' +
 
-        'สำหรับเรา มันมีความหมายมากจริง ๆ นะ<br /><br />' +
+        'เราอยากมีโอกาสได้รู้จักเรื่องราวของด้ายอีกเยอะ ๆ เลย<br /><br />' +
 
-        '<b>ดีใจมาก ๆ เลยที่ได้รู้จักด้ายนะ</b> 🌷✨'
+        'ไม่รู้ว่าข้างหน้าจะเป็นยังไง<br />' +
+
+        'แต่เราอยากให้เราได้ค่อย ๆ เรียนรู้กันไป<br />' +
+
+        '<b>แล้วปล่อยให้เวลาเป็นตัวพาความสัมพันธ์ของเราเติบโตนะ</b> 🌷✨'
       );
     };
 
     slow.onclick = () => {
       finish(
-        'เขินนิดหน่อย ค่อย ๆ คุยกันนะ',
+        'ค่อย ๆ ทำความรู้จักกันนะ',
 
-        `ไม่ต้องเขินเลยนะ <b>${TARGET_NAME}</b> 🌷<br /><br />` +
+        `ได้เลยนะ <b>${TARGET_NAME}</b> 🌷😊<br /><br />` +
 
-        'เราเองก็แอบเขินตอนทำหน้านี้เหมือนกัน<br />' +
+        'เราเองก็คิดแบบนั้นเหมือนกัน<br />' +
 
-        'แต่ความรู้สึกที่อยากบอกจริง ๆ คือ<br />' +
+        'ไม่จำเป็นต้องรีบไปไหนหรือรีบเป็นอะไรเลย<br />' +
 
-        'ดีใจมาก ๆ เลยที่ได้คุยและได้รู้จักกันนะ<br /><br />' +
+        'ค่อย ๆ คุย ค่อย ๆ เรียนรู้เรื่องราวของกันและกัน<br />' +
 
-        '<b>ค่อย ๆ คุย ค่อย ๆ รู้จักกันไปแบบสบาย ๆ นะ</b> 😊💗'
+        'มีเรื่องอะไรก็เอามาเล่าให้ฟังกันได้เรื่อย ๆ<br /><br />' +
+
+        'เราอยากให้ทุกอย่างเป็นไปอย่างสบายใจ<br />' +
+
+        '<b>แล้วค่อย ๆ ดูกันไปว่าเวลาและความรู้สึกจะพาเราไปถึงไหน</b> 💗'
       );
+    };
+
+    const confessions = [
+      '“เราไม่รู้หรอกว่าอนาคตจะเป็นยังไง แต่ตอนนี้เราดีใจที่ได้รู้จักด้ายนะ” 🌷',
+
+      '“อยากมีเรื่องมาเล่าให้ฟังอีกเยอะ ๆ และก็อยากฟังเรื่องราวของด้ายเหมือนกัน” 😊',
+
+      '“เราเชื่อว่าความสัมพันธ์ที่ดีไม่จำเป็นต้องรีบ แค่ค่อย ๆ ทำความรู้จักกันก็พอแล้ว” ✨',
+
+      '“บางทีคนที่เพิ่งเข้ามาในชีวิต ก็อาจกลายเป็นเรื่องราวดี ๆ ที่เราไม่เคยคาดคิดก็ได้นะ” 💗',
+
+      '“ขอบคุณที่ทำให้เราได้รู้จักกันนะ หวังว่าเราจะมีเรื่องราวดี ๆ ให้คุยกันอีกเยอะเลย” 🌸'
+    ];
+
+    let confessionIdx = 0;
+
+    $('swapConfession').onclick = () => {
+      confessionIdx = (confessionIdx + 1) % confessions.length;
+      $('confessionText').textContent = confessions[confessionIdx];
+
+      playTone(659.25, 0.18, 0.04);
+      risingHearts(12, '✨');
     };
 
     document.querySelectorAll('.sticker-btn').forEach(btn => {
