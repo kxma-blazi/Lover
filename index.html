@@ -14,8 +14,8 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
       :root {
-        --plum: #2b1033;
-        --wine: #5a1d4a;
+        --plum: #240d2d;
+        --wine: #541946;
         --rose: #ff7aa8;
         --blush: #ffd6e3;
         --cream: #fff3f7;
@@ -42,12 +42,13 @@
         background: radial-gradient(
           120% 90% at 50% 110%,
           #c2457d 0%,
-          var(--wine) 38%,
-          var(--plum) 75%
+          var(--wine) 40%,
+          var(--plum) 78%
         );
         padding-top: env(safe-area-inset-top, 0px);
         padding-bottom: env(safe-area-inset-bottom, 0px);
         -webkit-tap-highlight-color: transparent;
+        user-select: none;
       }
 
       canvas#fx {
@@ -63,8 +64,8 @@
         position: fixed;
         left: 50%;
         top: 50%;
-        width: 72vmin;
-        height: 72vmin;
+        width: 75vmin;
+        height: 75vmin;
         transform: translate(-50%, -50%);
         background: radial-gradient(
           circle,
@@ -78,7 +79,7 @@
 
       @keyframes breathe {
         50% {
-          transform: translate(-50%, -50%) scale(1.22);
+          transform: translate(-50%, -50%) scale(1.24);
           opacity: 0.72;
         }
       }
@@ -91,16 +92,18 @@
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 28px;
+        padding: 24px;
         z-index: 1;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.9s ease, visibility 0.9s;
+        transform: translateY(12px) scale(0.98);
+        transition: opacity 0.75s ease, transform 0.75s ease, visibility 0.75s;
       }
 
       .scene.on {
         opacity: 1;
         visibility: visible;
+        transform: translateY(0) scale(1);
       }
 
       .script {
@@ -112,7 +115,7 @@
 
       h1 {
         font-weight: 700;
-        font-size: clamp(24px, 6.5vw, 38px);
+        font-size: clamp(23px, 6.2vw, 36px);
         line-height: 1.5;
         max-width: 18em;
         text-shadow: 0 0 30px rgba(255, 122, 168, 0.6);
@@ -121,14 +124,38 @@
       p.sub {
         font-weight: 300;
         font-size: clamp(15px, 4vw, 18px);
-        line-height: 1.9;
+        line-height: 1.85;
         color: var(--blush);
         max-width: 28em;
-        margin-top: 14px;
+        margin-top: 12px;
+      }
+
+      /* กล่องพัสดุเคาะได้ */
+      .parcel-wrap {
+        position: relative;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .knock-badge {
+        position: absolute;
+        top: -18px;
+        right: -14px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 214, 227, 0.55);
+        backdrop-filter: blur(6px);
+        color: var(--gold);
+        font-size: 13px;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 999px;
+        transform: rotate(8deg);
+        transition: transform 0.2s, opacity 0.2s;
       }
 
       .envelope {
-        font-size: clamp(84px, 24vw, 128px);
+        font-size: clamp(88px, 25vw, 132px);
         line-height: 1;
         animation: float 3s ease-in-out infinite;
         filter: drop-shadow(0 0 28px rgba(255, 122, 168, 0.9));
@@ -136,25 +163,68 @@
         background: none;
         border: 0;
         padding: 12px;
+        transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .envelope.shake {
+        animation: knockShake 0.36s ease;
       }
 
       @keyframes float {
         50% {
-          transform: translateY(-14px) rotate(-3deg);
+          transform: translateY(-13px) rotate(-3deg);
         }
       }
 
+      @keyframes knockShake {
+        0%,
+        100% {
+          transform: scale(1) rotate(0deg);
+        }
+        25% {
+          transform: scale(1.16) rotate(-10deg);
+        }
+        50% {
+          transform: scale(1.2) rotate(10deg);
+        }
+        75% {
+          transform: scale(1.12) rotate(-5deg);
+        }
+      }
+
+      .knock-dots {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .knock-dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 214, 227, 0.25);
+        border: 1px solid rgba(255, 214, 227, 0.5);
+        transition: all 0.25s ease;
+      }
+
+      .knock-dots span.active {
+        background: var(--gold);
+        box-shadow: 0 0 12px var(--gold);
+        transform: scale(1.25);
+      }
+
+      /* ปุ่ม & ตัวเลือก */
       .btn {
         font-family: inherit;
         font-weight: 600;
-        font-size: 17px;
+        font-size: 16px;
         color: #fff;
         border: 0;
         border-radius: 999px;
         cursor: pointer;
-        padding: 15px 34px;
+        padding: 14px 30px;
         background: linear-gradient(135deg, #ff7aa8, #ff4f8b);
-        box-shadow: 0 8px 30px rgba(255, 79, 139, 0.55);
+        box-shadow: 0 8px 28px rgba(255, 79, 139, 0.5);
         transition: transform 0.2s, box-shadow 0.2s;
       }
 
@@ -162,44 +232,39 @@
         transform: scale(1.05);
       }
 
-      .btn:focus-visible,
-      .nope:focus-visible,
-      #mute:focus-visible,
-      input:focus-visible,
-      .envelope:focus-visible {
-        outline: 3px solid var(--gold);
-        outline-offset: 3px;
+      .mood-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(135px, 1fr));
+        gap: 12px;
+        margin-top: 24px;
+        width: min(360px, 88vw);
       }
 
-      .field {
-        margin: 26px 0 22px;
-        width: min(380px, 86vw);
-        background: rgba(255, 255, 255, 0.1);
-        border: 1.5px solid rgba(255, 214, 227, 0.5);
-        border-radius: 999px;
-        padding: 6px 8px;
-        backdrop-filter: blur(6px);
-      }
-
-      .field input {
-        width: 100%;
-        background: transparent;
-        border: 0;
-        outline: none;
-        text-align: center;
-        color: #fff;
+      .mood-btn {
         font-family: inherit;
-        font-size: 19px;
-        padding: 11px 14px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--cream);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1.5px solid rgba(255, 214, 227, 0.4);
+        border-radius: 18px;
+        padding: 14px 12px;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        transition: transform 0.2s, background 0.2s, border-color 0.2s;
       }
 
-      .field input::placeholder {
-        color: rgba(255, 214, 227, 0.65);
+      .mood-btn:hover,
+      .mood-btn:active {
+        transform: translateY(-2px) scale(1.03);
+        background: rgba(255, 122, 168, 0.28);
+        border-color: var(--gold);
       }
 
+      /* ข้อความพิมพ์ทีละตัว */
       #line {
         min-height: 4.5em;
-        font-size: clamp(20px, 5.4vw, 29px);
+        font-size: clamp(20px, 5.4vw, 28px);
         font-weight: 600;
         line-height: 1.7;
         max-width: 20em;
@@ -219,8 +284,25 @@
         }
       }
 
+      .progress-pill {
+        margin-top: 22px;
+        width: 140px;
+        height: 5px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--rose), var(--gold));
+        border-radius: 999px;
+        transition: width 0.5s ease;
+      }
+
       .heartbeat {
-        font-size: clamp(68px, 19vw, 100px);
+        font-size: clamp(66px, 18vw, 96px);
         line-height: 1.1;
         animation: beat 1.3s ease-in-out infinite;
         filter: drop-shadow(0 0 26px #ff4f8b);
@@ -243,19 +325,17 @@
       }
 
       .choices {
-        position: relative;
         display: flex;
-        gap: 16px;
+        gap: 14px;
         justify-content: center;
         align-items: center;
-        margin-top: 32px;
+        margin-top: 28px;
         flex-wrap: wrap;
-        min-height: 64px;
       }
 
       .btn.yes {
-        font-size: 20px;
-        padding: 16px 40px;
+        font-size: 19px;
+        padding: 15px 36px;
         animation: pulse 1.8s infinite;
       }
 
@@ -275,30 +355,66 @@
         background: rgba(255, 255, 255, 0.12);
         border: 1px solid rgba(255, 214, 227, 0.45);
         border-radius: 999px;
-        padding: 13px 24px;
+        padding: 13px 22px;
         cursor: pointer;
         transition: transform 0.2s, background 0.2s;
       }
 
-      .nope:hover {
-        background: rgba(255, 255, 255, 0.18);
-      }
-
+      /* การ์ดปิดท้าย + โพสต์สคริปต์ */
       .letter {
         background: rgba(255, 243, 247, 0.11);
         border: 1px solid rgba(255, 214, 227, 0.45);
         border-radius: 22px;
-        padding: 26px 24px;
+        padding: 24px 22px;
         max-width: 26em;
         backdrop-filter: blur(8px);
         box-shadow: 0 0 60px rgba(255, 122, 168, 0.3);
-        font-size: clamp(15px, 4.2vw, 18px);
-        line-height: 2;
-        margin-top: 16px;
+        font-size: clamp(15px, 4.1vw, 17.5px);
+        line-height: 1.95;
+        margin-top: 14px;
       }
 
       .letter b {
         color: var(--gold);
+      }
+
+      .secret-box {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px dashed rgba(255, 214, 227, 0.35);
+      }
+
+      .secret-btn {
+        font-family: inherit;
+        font-size: 13.5px;
+        color: var(--gold);
+        background: rgba(255, 210, 138, 0.12);
+        border: 1px solid rgba(255, 210, 138, 0.45);
+        border-radius: 999px;
+        padding: 7px 16px;
+        cursor: pointer;
+      }
+
+      .secret-note {
+        display: none;
+        margin-top: 10px;
+        font-size: 14px;
+        color: var(--blush);
+        background: rgba(43, 16, 51, 0.45);
+        padding: 10px 14px;
+        border-radius: 14px;
+      }
+
+      .coupon {
+        margin-top: 14px;
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 12px;
+        border: 1.5px dashed var(--gold);
+        background: rgba(255, 210, 138, 0.12);
+        color: var(--gold);
+        font-size: 13.5px;
+        font-weight: 600;
       }
 
       #mute {
@@ -333,49 +449,55 @@
     <button id="mute" aria-label="เปิดหรือปิดเสียงเพลง">🔊</button>
     <audio id="bgm" src="music.mp3" loop preload="auto"></audio>
 
-    <!-- 1 ซองจดหมาย -->
+    <!-- ฟอร์มซ่อนสำหรับ Netlify Forms -->
+    <form name="parcel-note" method="POST" data-netlify="true" hidden>
+      <input type="hidden" name="form-name" value="parcel-note" />
+      <input type="text" name="recipient_name" />
+      <input type="text" name="mood" />
+      <input type="text" name="answer" />
+    </form>
+
+    <!-- 1 เคาะกล่องพัสดุ 3 ครั้ง -->
     <section class="scene on" id="s1">
-      <button class="envelope" id="open" aria-label="รับพัสดุ">📦</button>
-      <p class="script" style="margin-top: 18px">special delivery</p>
-      <p class="sub">
-        มีพัสดุชิ้นเล็ก ๆ ส่งถึงด้าย<br />แตะที่กล่องเพื่อเปิดอ่านได้เลยนะ
+      <div class="parcel-wrap">
+        <span class="knock-badge" id="knockBadge">เคาะ 3 ทีนะ 🚪</span>
+        <button class="envelope" id="open" aria-label="เคาะกล่องพัสดุ">📦</button>
+      </div>
+      <div class="knock-dots" id="dots">
+        <span></span><span></span><span></span>
+      </div>
+      <p class="script" style="margin-top: 16px">special delivery</p>
+      <p class="sub" id="openHint">
+        ก๊อก ๆ มีพัสดุเล็ก ๆ ส่งถึง <b>น้องด้าย</b><br />ลองแตะที่กล่อง 3 ครั้งเพื่อเปิดดูสิ
       </p>
     </section>
 
-    <!-- 2 ใส่ชื่อ (Netlify Form) -->
+    <!-- 2 เช็กฟีลของน้องด้ายวันนี้ -->
     <section class="scene" id="s2">
-      <h1>ลงชื่อผู้รับพัสดุ 📝</h1>
-      <p class="sub">
-        ส่งตรงแบบน่ารัก ๆ<br />พิมพ์ชื่อเล่นก่อนเปิดดูข้างในได้เลย
-      </p>
-      <form name="parcel-note" method="POST" data-netlify="true" id="authForm">
-        <input type="hidden" name="form-name" value="parcel-note" />
-        <input type="hidden" name="answer" id="answerField" value="" />
-        <div class="field">
-          <input
-            type="text"
-            id="nameInput"
-            name="recipient_name"
-            placeholder="ชื่อผู้รับ"
-            required
-            autocomplete="off"
-          />
-        </div>
-        <button class="btn" type="submit">ยืนยันรับพัสดุ</button>
-      </form>
-      <div id="check" class="sub" style="display: none; line-height: 2.2"></div>
+      <div class="script" style="font-size: 36px">quick check-in</div>
+      <h1 style="margin-top: 6px">วันนี้ของน้องด้ายเป็นไงบ้าง? 🌷</h1>
+      <p class="sub">เลือกฟีลตอนนี้ได้เลย เดี๋ยวพัสดุปรับโหมดให้ตรงใจ</p>
+      <div class="mood-grid">
+        <button class="mood-btn" data-mood="chill">ชิลล์ ๆ สบาย ๆ ☀️</button>
+        <button class="mood-btn" data-mood="sleepy">ง่วงนิด ๆ อยากพัก 🥱</button>
+        <button class="mood-btn" data-mood="tired">เหนื่อยนิดหน่อย 🔋</button>
+        <button class="mood-btn" data-mood="happy">อารมณ์ดีมาก ✨</button>
+      </div>
     </section>
 
     <!-- 3 ข้อความทีละบรรทัด -->
     <section class="scene" id="s3">
-      <div class="script" id="hi" style="margin-bottom: 26px"></div>
+      <div class="script" id="hi" style="margin-bottom: 22px"></div>
       <div id="line"></div>
+      <div class="progress-pill">
+        <div class="progress-fill" id="prog"></div>
+      </div>
     </section>
 
     <!-- 4 ชวนคุยต่อแบบสบาย ๆ -->
     <section class="scene" id="s4">
       <div class="heartbeat">💗</div>
-      <h1 style="margin-top: 18px" id="ask"></h1>
+      <h1 style="margin-top: 16px" id="ask"></h1>
       <p class="sub">ไม่ต้องรีบตอบเลยนะ แค่อยากชวนยิ้ม 😊</p>
       <div class="choices" id="choices">
         <button class="btn yes" id="yes">คุยกันต่อนะ 😊</button>
@@ -383,11 +505,20 @@
       </div>
     </section>
 
-    <!-- 5 การ์ดปิดท้าย -->
+    <!-- 5 การ์ดปิดท้าย + โพสต์สคริปต์ + คูปอง -->
     <section class="scene" id="s5">
       <div class="heartbeat">🥹💖</div>
-      <p class="script" style="margin-top: 10px">a little note for you</p>
-      <div class="letter" id="finalLetter"></div>
+      <p class="script" style="margin-top: 6px">a little note for you</p>
+      <div class="letter">
+        <div id="finalLetter"></div>
+        <div class="coupon">🎟️ คูปอง: เลี้ยงขนม/น้ำแก้วโปรด 1 สิทธิ์ (แคปจอมาใช้ได้เลย)</div>
+        <div class="secret-box">
+          <button class="secret-btn" id="secretBtn">แอบเปิดดู P.S. ลับ 🤫</button>
+          <div class="secret-note" id="secretNote">
+            P.S. จริง ๆ แอบตั้งใจทำหน้านี้ขึ้นมาให้ด้ายยิ้มได้สัก 5 วินาทีก็คุ้มแล้ว 😊🌷
+          </div>
+        </div>
+      </div>
     </section>
 
     <script>
@@ -396,9 +527,8 @@
       const bgm = $('bgm')
       const mute = $('mute')
 
-      // ถ้าอยากข้ามหน้ากรอกชื่อ ให้ใส่ 'น้องด้าย' ลงไป ถ้าเว้นว่าง '' จะให้กรอกชื่อก่อน
       const TARGET_NAME = 'น้องด้าย'
-      let userName = 'น้องด้าย'
+      let selectedMood = 'chill'
 
       function show(id) {
         document
@@ -412,12 +542,66 @@
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({
             'form-name': 'parcel-note',
+            recipient_name: TARGET_NAME,
+            mood: selectedMood,
             ...payload
           }).toString()
         }).catch(() => {})
       }
 
-      /* ---------- กลีบซากุระและหัวใจลอย ---------- */
+      /* ---------- เอฟเฟกต์เสียงระฆังเบา ๆ ตอนเคาะ / สำรองเมื่อไม่มี music.mp3 ---------- */
+      let audioCtx = null
+      let soundMuted = false
+      let chimeLoop = null
+      let usingFallback = false
+
+      function playTone(freq, duration = 0.25, volume = 0.05) {
+        if (soundMuted) return
+        if (!audioCtx) {
+          const AC = window.AudioContext || window.webkitAudioContext
+          if (!AC) return
+          audioCtx = new AC()
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {})
+        const now = audioCtx.currentTime
+        const osc = audioCtx.createOscillator()
+        const gain = audioCtx.createGain()
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(freq, now)
+        gain.gain.setValueAtTime(0.0001, now)
+        gain.gain.exponentialRampToValueAtTime(volume, now + 0.03)
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration)
+        osc.connect(gain)
+        gain.connect(audioCtx.destination)
+        osc.start(now)
+        osc.stop(now + duration + 0.05)
+      }
+
+      function startAudio() {
+        bgm.volume = 0
+        bgm.play()
+          .then(() => {
+            let v = 0
+            const f = setInterval(() => {
+              v = Math.min(0.8, v + 0.05)
+              bgm.volume = v
+              if (v >= 0.8) clearInterval(f)
+            }, 140)
+          })
+          .catch(() => {
+            usingFallback = true
+            const notes = [523.25, 659.25, 783.99, 659.25]
+            let i = 0
+            chimeLoop = setInterval(() => {
+              if (!soundMuted) {
+                playTone(notes[i % notes.length], 1.2, 0.03)
+                i++
+              }
+            }, 1800)
+          })
+      }
+
+      /* ---------- กลีบซากุระและหัวใจลอย + แตะตรงไหนหัวใจเด้งตรงนั้น ---------- */
       const cv = $('fx')
       const cx = cv.getContext('2d')
       let W, H
@@ -432,27 +616,34 @@
       addEventListener('resize', resize)
       resize()
 
-      const glyphs = ['🌸', '💗', '✨', '💕', '🌸']
+      const glyphs = ['🌸', '💗', '✨', '💕', '🌷']
 
-      function spawn(burst) {
+      function spawn(burst, customX, customY) {
         const dpr = Math.min(devicePixelRatio || 1, 2)
         bits.push({
-          x: Math.random() * W,
-          y: burst ? H * 1.05 : -40,
-          s: (14 + Math.random() * 20) * dpr,
-          vy: (burst ? -1 : 1) * (0.5 + Math.random() * 1.3) * dpr,
-          vx: (Math.random() - 0.5) * 0.75 * dpr,
+          x: customX !== undefined ? customX * dpr : Math.random() * W,
+          y: customY !== undefined ? customY * dpr : burst ? H * 1.05 : -40,
+          s: (14 + Math.random() * 18) * dpr,
+          vy: (burst ? -1 : 1) * (0.5 + Math.random() * 1.2) * dpr,
+          vx: (Math.random() - 0.5) * 0.9 * dpr,
           r: Math.random() * 6,
           vr: (Math.random() - 0.5) * 0.025,
           g: glyphs[Math.floor(Math.random() * glyphs.length)],
-          a: 0.35 + Math.random() * 0.5
+          a: 0.4 + Math.random() * 0.5
         })
       }
 
-      let rate = 0.12
+      // แตะหน้าจอตรงไหน หัวใจเด้งขึ้นมาตรงนั้น
+      document.addEventListener('pointerdown', e => {
+        for (let i = 0; i < 4; i++) {
+          spawn(true, e.clientX + (Math.random() - 0.5) * 30, e.clientY)
+        }
+      })
+
+      let rate = 0.14
       ;(function loop() {
         cx.clearRect(0, 0, W, H)
-        if (Math.random() < rate && bits.length < 85) spawn(false)
+        if (Math.random() < rate && bits.length < 95) spawn(false)
         bits = bits.filter(b => b.y > -80 && b.y < H + 80)
         for (const b of bits) {
           b.x += b.vx + Math.sin(b.y / 90) * 0.45
@@ -471,11 +662,67 @@
       })()
 
       function risingHearts(n) {
-        for (let i = 0; i < n; i++) setTimeout(() => spawn(true), i * 45)
+        for (let i = 0; i < n; i++) setTimeout(() => spawn(true), i * 40)
       }
 
+      /* ---------- ลูกเล่นที่ 1: เคาะกล่อง 3 ครั้ง ---------- */
+      let knocks = 0
+      const openBtn = $('open')
+      const badge = $('knockBadge')
+      const dots = $('dots').querySelectorAll('span')
+      const knockTexts = ['ก๊อก! (1/3)', 'ก๊อก ก๊อก! (2/3)', 'เปิดออกแล้ว ✨']
+
+      openBtn.onclick = () => {
+        if (knocks >= 3) return
+        knocks++
+        if (navigator.vibrate) navigator.vibrate(35)
+        playTone(440 + knocks * 110, 0.22, 0.06)
+
+        openBtn.classList.remove('shake')
+        void openBtn.offsetWidth
+        openBtn.classList.add('shake')
+
+        badge.textContent = knockTexts[knocks - 1]
+        dots[knocks - 1].classList.add('active')
+
+        if (knocks === 3) {
+          openBtn.textContent = '💌'
+          startAudio()
+          mute.style.display = 'block'
+          rate = 0.28
+          sendNetlify({ answer: 'เคาะเปิดกล่องแล้ว' })
+          setTimeout(() => show('s2'), 650)
+        }
+      }
+
+      mute.onclick = () => {
+        soundMuted = !soundMuted
+        mute.textContent = soundMuted ? '🔇' : '🔊'
+        if (!usingFallback) {
+          if (soundMuted) bgm.pause()
+          else bgm.play().catch(() => {})
+        }
+      }
+
+      /* ---------- ลูกเล่นที่ 2: เลือกฟีลวันนี้ ---------- */
+      const moodReplies = {
+        chill: 'ดีเลย วันชิลล์ ๆ แบบนี้\nเหมาะกับการอ่านอะไรน่ารัก ๆ พอดี 😊',
+        sleepy: 'ถ้าง่วงนิด ๆ เดี๋ยวพัสดุชิ้นนี้\nช่วยเติมความสดชื่นให้ก่อนนอนนะ 🌙',
+        tired: 'ถ้าวันนี้เหนื่อยมามากแล้ว\nขอให้ข้อความนี้เป็นกำลังใจเล็ก ๆ นะ 🔋',
+        happy: 'วันอารมณ์ดีแบบนี้\nขอเติมรอยยิ้มเพิ่มให้อีกนิดนึงนะ ✨'
+      }
+
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        btn.onclick = () => {
+          selectedMood = btn.dataset.mood
+          playTone(659.25, 0.3, 0.05)
+          sendNetlify({ answer: 'เลือกฟีลวันนี้แล้ว' })
+          story()
+        }
+      })
+
       /* ---------- พิมพ์ข้อความทีละตัว ---------- */
-      async function type(el, text, speed = 65) {
+      async function type(el, text, speed = 60) {
         el.textContent = ''
         for (const ch of text) {
           el.textContent += ch
@@ -483,107 +730,47 @@
         }
       }
 
-      /* ---------- ฉาก 1 → 2 ---------- */
-      $('open').onclick = () => {
-        bgm.volume = 0
-        bgm.play().catch(() => {})
-        let v = 0
-        const f = setInterval(() => {
-          v = Math.min(0.8, v + 0.05)
-          bgm.volume = v
-          if (v >= 0.8) clearInterval(f)
-        }, 140)
-        mute.style.display = 'block'
-        rate = 0.3
-
-        if (TARGET_NAME) {
-          userName = TARGET_NAME
-          sendNetlify({
-            recipient_name: userName,
-            answer: 'เปิดพัสดุแล้ว'
-          })
-          story()
-        } else {
-          show('s2')
-          setTimeout(() => $('nameInput').focus(), 800)
-        }
-      }
-
-      mute.onclick = () => {
-        if (bgm.paused) {
-          bgm.play().catch(() => {})
-          mute.textContent = '🔊'
-        } else {
-          bgm.pause()
-          mute.textContent = '🔇'
-        }
-      }
-
-      /* ---------- ฉาก 2 → 3 ---------- */
-      $('authForm').addEventListener('submit', e => {
-        e.preventDefault()
-        userName = $('nameInput').value.trim()
-        if (!userName) return
-        sendNetlify({
-          recipient_name: userName,
-          answer: 'ยืนยันชื่อผู้รับแล้ว'
-        })
-        fakeCheck()
-      })
-
-      async function fakeCheck() {
-        $('authForm').style.display = 'none'
-        const c = $('check')
-        c.style.display = 'block'
-        c.innerHTML = ''
-        const steps = [
-          'กำลังเช็กชื่อผู้รับพัสดุ...',
-          'เจอรหัสพัสดุ 1 ชิ้น ✅',
-          'ข้างในมีข้อความเล็ก ๆ รออยู่นะ 💌'
-        ]
-        for (const t of steps) {
-          c.append(t, document.createElement('br'))
-          await wait(1000)
-        }
-        await wait(450)
-        story()
-      }
-
       async function story() {
         show('s3')
-        await wait(1000)
-        $('hi').textContent = 'ถึง ' + userName + ' 🌷'
-        await wait(1200)
+        await wait(800)
+        $('hi').textContent = `ถึง${TARGET_NAME} 🌷`
+        await wait(950)
+
         const lines = [
+          moodReplies[selectedMood],
           'จริง ๆ เราก็เพิ่งเริ่มได้คุยกันเองเนอะ',
           'แต่เรารู้สึกดีนะ ที่ได้รู้จักกัน',
           'บางทีแค่ได้คุยกันนิดหน่อย\nก็ทำให้วันธรรมดาดูน่าสนใจขึ้นเลย',
-          'เลยอยากส่งข้อความเล็ก ๆ นี้มาให้ 😊'
+          'เลยตั้งใจส่งพัสดุเล็ก ๆ ชิ้นนี้มาให้ 😊'
         ]
+
         const el = $('line')
-        for (const t of lines) {
-          el.style.whiteSpace = 'pre-line'
-          await type(el, t, 65)
-          await wait(1600)
+        const prog = $('prog')
+        el.style.whiteSpace = 'pre-line'
+
+        for (let i = 0; i < lines.length; i++) {
+          prog.style.width = `${((i + 1) / lines.length) * 100}%`
+          await type(el, lines[i], 58)
+          await wait(1450)
         }
         proposal()
       }
 
-      /* ---------- ฉาก 4 ---------- */
+      /* ---------- ฉาก 4: ชวนคุยต่อ ---------- */
       async function proposal() {
         show('s4')
         rate = 0.45
-        await wait(850)
-        $('ask').textContent = 'ให้เราได้คุยกับ ' + userName + ' ไปเรื่อย ๆ ได้ไหม?'
+        await wait(750)
+        $('ask').textContent = `ให้เราได้คุยกับ${TARGET_NAME}ไปเรื่อย ๆ ได้ไหม?`
       }
 
-      /* ปุ่มเลือกแบบน่ารัก ๆ ไม่วิ่งหนีจนหงุดหงิด */
       const yes = $('yes')
       const slow = $('slow')
       let nudge = 0
 
       slow.onclick = () => {
         nudge++
+        playTone(587.33, 0.2, 0.05)
         if (nudge === 1) {
           slow.textContent = 'แอบชวนคุยต่ออีกนิดนะ 😊'
           yes.style.transform = 'scale(1.08)'
@@ -591,28 +778,25 @@
         }
         finish(
           'yes (ค่อย ๆ คุยกันไป)',
-          `ได้เลยนะ <b>${userName}</b> 🌷<br />` +
+          `ได้เลยนะ <b>${TARGET_NAME}</b> 🌷<br />` +
             'ไม่ต้องรีบอะไรเลย ค่อย ๆ คุย ค่อย ๆ รู้จักกันไป<br />' +
-            'ขอบคุณที่แวะมาอ่านข้อความนี้<br />' +
-            '<b>ขอให้วันนี้เป็นวันที่น่ารักนะ</b> ✨'
+            'ขอบคุณที่แวะมาเปิดพัสดุชิ้นนี้นะ<br />' +
+            '<b>ขอให้วันนี้เป็นวันที่น่ารักของด้าย</b> ✨'
         )
       }
 
       function finish(answerLabel, message) {
-        $('answerField').value = answerLabel
-        sendNetlify({
-          recipient_name: userName || TARGET_NAME || 'ไม่ระบุชื่อ',
-          answer: answerLabel
-        })
+        sendNetlify({ answer: answerLabel })
         $('finalLetter').innerHTML = message
         show('s5')
-        rate = 0.7
-        risingHearts(55)
+        rate = 0.75
+        risingHearts(60)
+        playTone(783.99, 0.4, 0.06)
 
         const heart = confetti.shapeFromText
-          ? confetti.shapeFromText({ text: '💖', scalar: 2.6 })
+          ? confetti.shapeFromText({ text: '💖', scalar: 2.5 })
           : 'circle'
-        const end = Date.now() + 4000
+        const end = Date.now() + 3600
 
         ;(function shoot() {
           confetti({
@@ -621,7 +805,7 @@
             spread: 65,
             origin: { x: 0, y: 0.75 },
             shapes: [heart],
-            scalar: 2.6,
+            scalar: 2.5,
             colors: ['#ff7aa8', '#ffd6e3', '#ffd28a']
           })
           confetti({
@@ -630,7 +814,7 @@
             spread: 65,
             origin: { x: 1, y: 0.75 },
             shapes: [heart],
-            scalar: 2.6,
+            scalar: 2.5,
             colors: ['#ff7aa8', '#ffd6e3', '#ffd28a']
           })
           if (Date.now() < end) requestAnimationFrame(shoot)
@@ -640,11 +824,22 @@
       yes.onclick = () =>
         finish(
           'yes (คุยกันต่อ)',
-          `เย้ ขอบคุณนะ <b>${userName}</b> 😊💗<br />` +
+          `เย้ ขอบคุณนะ <b>${TARGET_NAME}</b> 😊💗<br />` +
             'ดีใจที่ด้ายอยากคุยกันต่อนะ<br />' +
             'ค่อย ๆ แลกเรื่องราวดี ๆ กันไปทีละนิด<br />' +
-            '<b>ยินดีที่ได้รู้จักกันนะ</b> 🌷'
+            '<b>ยินดีที่ได้รู้จักด้ายนะ</b> 🌷'
         )
+
+      /* ---------- ปุ่มเปิด P.S. ลับ ---------- */
+      $('secretBtn').onclick = () => {
+        const note = $('secretNote')
+        const isOpen = note.style.display === 'block'
+        note.style.display = isOpen ? 'none' : 'block'
+        $('secretBtn').textContent = isOpen
+          ? 'แอบเปิดดู P.S. ลับ 🤫'
+          : 'ซ่อน P.S. ลับ 🙈'
+        if (!isOpen) risingHearts(18)
+      }
     </script>
   </body>
 </html>
