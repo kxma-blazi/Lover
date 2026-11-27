@@ -130,7 +130,6 @@
         margin-top: 12px;
       }
 
-      /* กล่องพัสดุเคาะได้ */
       .parcel-wrap {
         position: relative;
         display: inline-flex;
@@ -213,7 +212,6 @@
         transform: scale(1.25);
       }
 
-      /* ปุ่ม & ตัวเลือก */
       .btn {
         font-family: inherit;
         font-weight: 600;
@@ -225,7 +223,7 @@
         padding: 14px 30px;
         background: linear-gradient(135deg, #ff7aa8, #ff4f8b);
         box-shadow: 0 8px 28px rgba(255, 79, 139, 0.5);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
       }
 
       .btn:hover {
@@ -261,7 +259,6 @@
         border-color: var(--gold);
       }
 
-      /* ข้อความพิมพ์ทีละตัว */
       #line {
         min-height: 4.5em;
         font-size: clamp(20px, 5.4vw, 28px);
@@ -325,18 +322,21 @@
       }
 
       .choices {
+        position: relative;
         display: flex;
         gap: 14px;
         justify-content: center;
         align-items: center;
         margin-top: 28px;
         flex-wrap: wrap;
+        min-height: 56px;
       }
 
       .btn.yes {
         font-size: 19px;
         padding: 15px 36px;
         animation: pulse 1.8s infinite;
+        z-index: 2;
       }
 
       @keyframes pulse {
@@ -357,10 +357,13 @@
         border-radius: 999px;
         padding: 13px 22px;
         cursor: pointer;
-        transition: transform 0.2s, background 0.2s;
+        z-index: 3;
+        transition: left 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+          top 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.2s ease,
+          background 0.2s ease;
       }
 
-      /* การ์ดปิดท้าย + โพสต์สคริปต์ */
       .letter {
         background: rgba(255, 243, 247, 0.11);
         border: 1px solid rgba(255, 214, 227, 0.45);
@@ -449,7 +452,6 @@
     <button id="mute" aria-label="เปิดหรือปิดเสียงเพลง">🔊</button>
     <audio id="bgm" src="music.mp3" loop preload="auto"></audio>
 
-    <!-- ฟอร์มซ่อนสำหรับ Netlify Forms -->
     <form name="parcel-note" method="POST" data-netlify="true" hidden>
       <input type="hidden" name="form-name" value="parcel-note" />
       <input type="text" name="recipient_name" />
@@ -549,10 +551,9 @@
         }).catch(() => {})
       }
 
-      /* ---------- เอฟเฟกต์เสียงระฆังเบา ๆ ตอนเคาะ / สำรองเมื่อไม่มี music.mp3 ---------- */
+      /* ---------- เสียงระฆังเบา ๆ ---------- */
       let audioCtx = null
       let soundMuted = false
-      let chimeLoop = null
       let usingFallback = false
 
       function playTone(freq, duration = 0.25, volume = 0.05) {
@@ -579,7 +580,8 @@
 
       function startAudio() {
         bgm.volume = 0
-        bgm.play()
+        bgm
+          .play()
           .then(() => {
             let v = 0
             const f = setInterval(() => {
@@ -592,7 +594,7 @@
             usingFallback = true
             const notes = [523.25, 659.25, 783.99, 659.25]
             let i = 0
-            chimeLoop = setInterval(() => {
+            setInterval(() => {
               if (!soundMuted) {
                 playTone(notes[i % notes.length], 1.2, 0.03)
                 i++
@@ -601,7 +603,7 @@
           })
       }
 
-      /* ---------- กลีบซากุระและหัวใจลอย + แตะตรงไหนหัวใจเด้งตรงนั้น ---------- */
+      /* ---------- กลีบซากุระและหัวใจลอย ---------- */
       const cv = $('fx')
       const cx = cv.getContext('2d')
       let W, H
@@ -633,7 +635,6 @@
         })
       }
 
-      // แตะหน้าจอตรงไหน หัวใจเด้งขึ้นมาตรงนั้น
       document.addEventListener('pointerdown', e => {
         for (let i = 0; i < 4; i++) {
           spawn(true, e.clientX + (Math.random() - 0.5) * 30, e.clientY)
@@ -665,7 +666,7 @@
         for (let i = 0; i < n; i++) setTimeout(() => spawn(true), i * 40)
       }
 
-      /* ---------- ลูกเล่นที่ 1: เคาะกล่อง 3 ครั้ง ---------- */
+      /* ---------- เคาะกล่อง 3 ครั้ง ---------- */
       let knocks = 0
       const openBtn = $('open')
       const badge = $('knockBadge')
@@ -704,7 +705,7 @@
         }
       }
 
-      /* ---------- ลูกเล่นที่ 2: เลือกฟีลวันนี้ ---------- */
+      /* ---------- เลือกฟีลวันนี้ ---------- */
       const moodReplies = {
         chill: 'ดีเลย วันชิลล์ ๆ แบบนี้\nเหมาะกับการอ่านอะไรน่ารัก ๆ พอดี 😊',
         sleepy: 'ถ้าง่วงนิด ๆ เดี๋ยวพัสดุชิ้นนี้\nช่วยเติมความสดชื่นให้ก่อนนอนนะ 🌙',
@@ -756,36 +757,108 @@
         proposal()
       }
 
-      /* ---------- ฉาก 4: ชวนคุยต่อ ---------- */
+      /* ---------- ฉาก 4: ปุ่มขวาวิ่งหนีเมื่อจะกด ---------- */
+      const yes = $('yes')
+      const slow = $('slow')
+      let dodgeCount = 0
+      let lastDodgeAt = 0
+
       async function proposal() {
+        dodgeCount = 0
+        slow.style.position = ''
+        slow.style.left = ''
+        slow.style.top = ''
+        slow.style.transform = ''
+        yes.style.transform = ''
+        slow.textContent = 'ค่อย ๆ คุยกันไป 🌷'
+
         show('s4')
         rate = 0.45
         await wait(750)
         $('ask').textContent = `ให้เราได้คุยกับ${TARGET_NAME}ไปเรื่อย ๆ ได้ไหม?`
       }
 
-      const yes = $('yes')
-      const slow = $('slow')
-      let nudge = 0
+      function moveSlowButton(e) {
+        if (e) e.preventDefault()
+        const now = Date.now()
+        if (now - lastDodgeAt < 140) return
+        lastDodgeAt = now
 
-      slow.onclick = () => {
-        nudge++
-        playTone(587.33, 0.2, 0.05)
-        if (nudge === 1) {
-          slow.textContent = 'แอบชวนคุยต่ออีกนิดนะ 😊'
-          yes.style.transform = 'scale(1.08)'
-          return
+        dodgeCount++
+        playTone(520 + Math.min(dodgeCount, 8) * 45, 0.14, 0.04)
+
+        const yesRect = yes.getBoundingClientRect()
+        const btnW = slow.offsetWidth || 150
+        const btnH = slow.offsetHeight || 46
+        const pad = 18
+        const topSafe = 72
+        const bottomSafe = 48
+
+        const maxX = Math.max(pad, innerWidth - btnW - pad)
+        const maxY = Math.max(topSafe, innerHeight - btnH - bottomSafe)
+
+        slow.style.position = 'fixed'
+
+        let nextX = pad
+        let nextY = topSafe
+
+        for (let attempt = 0; attempt < 25; attempt++) {
+          const candX = pad + Math.random() * (maxX - pad)
+          const candY = topSafe + Math.random() * (maxY - topSafe)
+
+          // กันไม่ให้ไปทับปุ่มหลัก "คุยกันต่อนะ"
+          const overlapsYes =
+            candX < yesRect.right + 16 &&
+            candX + btnW > yesRect.left - 16 &&
+            candY < yesRect.bottom + 16 &&
+            candY + btnH > yesRect.top - 16
+
+          if (!overlapsYes) {
+            nextX = candX
+            nextY = candY
+            break
+          }
         }
-        finish(
-          'yes (ค่อย ๆ คุยกันไป)',
-          `ได้เลยนะ <b>${TARGET_NAME}</b> 🌷<br />` +
-            'ไม่ต้องรีบอะไรเลย ค่อย ๆ คุย ค่อย ๆ รู้จักกันไป<br />' +
-            'ขอบคุณที่แวะมาเปิดพัสดุชิ้นนี้นะ<br />' +
-            '<b>ขอให้วันนี้เป็นวันที่น่ารักของด้าย</b> ✨'
-        )
+
+        const scaleDown = Math.max(0.72, 1 - dodgeCount * 0.04)
+        const scaleUp = Math.min(1.24, 1 + dodgeCount * 0.035)
+
+        slow.style.left = `${Math.round(nextX)}px`
+        slow.style.top = `${Math.round(nextY)}px`
+        slow.style.transform = `scale(${scaleDown})`
+        yes.style.transform = `scale(${scaleUp})`
+
+        const teases = [
+          'หนีแล้วนะ 😜',
+          'กดไม่โดนหรอก 🌷',
+          'ลองกดปุ่มซ้ายดูสิ 😊',
+          'ไปทางนู้นดีกว่า ✨'
+        ]
+        if (dodgeCount >= 2) {
+          slow.textContent = teases[(dodgeCount - 2) % teases.length]
+        }
       }
 
+      slow.addEventListener('pointerenter', moveSlowButton)
+      slow.addEventListener('pointerdown', moveSlowButton)
+      slow.addEventListener('touchstart', moveSlowButton, { passive: false })
+      slow.addEventListener('click', e => {
+        e.preventDefault()
+        if (dodgeCount < 4) {
+          moveSlowButton(e)
+        } else {
+          finish(
+            'yes (ตามตื้อจนยอม)',
+            `ได้เลยนะ <b>${TARGET_NAME}</b> 🌷<br />` +
+              'ไม่ต้องรีบอะไรเลย ค่อย ๆ คุย ค่อย ๆ รู้จักกันไป<br />' +
+              'ขอบคุณที่แวะมาเปิดพัสดุชิ้นนี้นะ<br />' +
+              '<b>ขอให้วันนี้เป็นวันที่น่ารักของด้าย</b> ✨'
+          )
+        }
+      })
+
       function finish(answerLabel, message) {
+        slow.style.display = 'none'
         sendNetlify({ answer: answerLabel })
         $('finalLetter').innerHTML = message
         show('s5')
@@ -830,7 +903,6 @@
             '<b>ยินดีที่ได้รู้จักด้ายนะ</b> 🌷'
         )
 
-      /* ---------- ปุ่มเปิด P.S. ลับ ---------- */
       $('secretBtn').onclick = () => {
         const note = $('secretNote')
         const isOpen = note.style.display === 'block'
